@@ -193,7 +193,7 @@ export default function Home() {
                   Here
                 </h1>
 
-                <div className="border-t-2 border-charcoal pt-5 w-full max-w-sm mx-auto lg:mx-0">
+                <div className="border-t-2 border-charcoal pt-5 w-full lg:max-w-sm">
                   <p className="text-base leading-relaxed font-medium mb-6">
                     Hands-on training in injectables, skin rejuvenation, and body
                     contouring — taught by practitioners, not textbooks.
@@ -613,6 +613,106 @@ export default function Home() {
                 <div className="h-2 w-24 bg-charcoal" />
               </div>
             </FadeIn>
+          </section>
+
+          {/* Location & Contact */}
+          <section id="contact" className="mb-32">
+            <FadeIn>
+              <div className="flex items-center gap-4 mb-16">
+                <span className="h-px flex-1 bg-charcoal opacity-20" />
+                <h2 className="text-2xl font-[Montserrat] font-black uppercase tracking-widest italic">
+                  Visit Us
+                </h2>
+                <span className="h-px flex-1 bg-charcoal opacity-20" />
+              </div>
+            </FadeIn>
+
+            <div className="grid grid-cols-12 gap-8">
+              {/* Map */}
+              <FadeIn className="col-span-12 lg:col-span-7">
+                <div className="w-full h-[350px] sm:h-[420px] shadow-clinical overflow-hidden">
+                  <iframe
+                    title="AAME Location"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3464.2!2d-95.481!3d29.7328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjnCsDQzJzU4LjEiTiA5NcKwMjgnNTEuNiJX!5e0!3m2!1sen!2sus!4v1700000000000"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              </FadeIn>
+
+              {/* Contact Info */}
+              <FadeIn delay={0.2} className="col-span-12 lg:col-span-5 text-center lg:text-left">
+                <div className="bg-charcoal p-8 sm:p-10 h-full flex flex-col justify-center">
+                  <div className="mb-8">
+                    <span className="material-symbols-outlined text-primary text-5xl mb-4 block">
+                      location_on
+                    </span>
+                    <h3 className="text-2xl font-[Montserrat] font-black text-white uppercase mb-2">
+                      Our Location
+                    </h3>
+                    <p className="text-gray-300 text-lg leading-relaxed">
+                      6430 Richmond Ave. Off. 270
+                      <br />
+                      Houston, TX 77057
+                    </p>
+                  </div>
+
+                  <div className="mb-8">
+                    <span className="material-symbols-outlined text-primary text-3xl mb-3 block">
+                      phone
+                    </span>
+                    <a
+                      href="tel:+17139275300"
+                      className="text-white text-2xl font-[Montserrat] font-black hover:text-primary transition-colors"
+                    >
+                      (713) 927-5300
+                    </a>
+                  </div>
+
+                  <div className="mb-8">
+                    <span className="material-symbols-outlined text-primary text-3xl mb-3 block">
+                      schedule
+                    </span>
+                    <p className="text-gray-300 text-sm font-semibold uppercase tracking-wider">
+                      Tue – Sat: 11am – 5pm
+                    </p>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mt-1">
+                      Sun – Mon: Closed
+                    </p>
+                  </div>
+
+                  {/* Google Maps & Waze Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <motion.a
+                      href="https://www.google.com/maps/dir/?api=1&destination=6430+Richmond+Ave+Suite+270+Houston+TX+77057"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="flex-1 sparkle-btn text-charcoal font-black uppercase text-xs tracking-widest px-6 py-3.5 text-center cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-base">map</span>
+                      Google Maps
+                    </motion.a>
+                    <motion.a
+                      href="https://waze.com/ul?ll=29.7328,-95.481&navigate=yes&zoom=17"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="flex-1 border-2 border-primary text-primary font-black uppercase text-xs tracking-widest px-6 py-3.5 text-center hover:bg-primary hover:text-charcoal transition-colors cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-base">navigation</span>
+                      Waze
+                    </motion.a>
+                  </div>
+                </div>
+              </FadeIn>
+            </div>
           </section>
         </main>
 
