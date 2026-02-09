@@ -356,7 +356,7 @@ export default function Home() {
             </FadeIn>
 
             <div className="grid grid-cols-12 gap-6 items-center">
-              <FadeIn className="col-span-12 lg:col-span-5 relative">
+              <FadeIn className="col-span-12 lg:col-span-5 relative overflow-hidden">
                 <div className="relative">
                   <div className="bg-charcoal p-3 shadow-2xl">
                     <Image
@@ -367,7 +367,7 @@ export default function Home() {
                       height={550}
                     />
                   </div>
-                  <div className="absolute -top-6 -left-6 bg-primary w-32 h-32 -z-10 opacity-20" />
+                  <div className="absolute -top-6 -left-6 bg-primary w-32 h-32 -z-10 opacity-20 hidden lg:block" />
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -557,7 +557,7 @@ export default function Home() {
           </section>
 
           {/* Professional Pathways */}
-          <section id="pathways" className="grid grid-cols-12 gap-6 mb-32 relative">
+          <section id="pathways" className="grid grid-cols-12 gap-6 mb-32 relative overflow-hidden">
             <FadeIn className="col-span-12 lg:col-span-5 bg-charcoal text-white p-8 sm:p-12 geometric-block relative z-20 shadow-2xl">
               <h4 className="text-3xl sm:text-4xl lg:text-5xl font-[Montserrat] font-black uppercase leading-[0.85] mb-6 sm:mb-8 break-words">
                 Professional
