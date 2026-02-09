@@ -102,27 +102,27 @@ export default function Home() {
         {/* Hero with GodRays Background */}
         <section ref={heroRef} className="relative min-h-[100dvh] flex items-center overflow-hidden">
           {/* GodRays Shader Background */}
-          <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 z-0 pointer-events-none">
             <GodRays
-              colorBack="#fdfdfd"
-              colors={["#08d1ce50", "#00f2fe38", "#2c2c2c18", "#08d1ce30"]}
+              colorBack="#f0f4f8"
+              colors={["#08d1cecc", "#00f2febb", "#0a8b89aa", "#08d1ce99"]}
               colorBloom="#08d1ce"
-              offsetX={0.8}
-              offsetY={-0.8}
-              intensity={0.6}
+              offsetX={0.85}
+              offsetY={-1}
+              intensity={0.9}
               spotty={0.5}
-              midSize={8}
-              midIntensity={0}
-              density={0.4}
-              bloom={0.35}
+              midSize={12}
+              midIntensity={0.3}
+              density={0.5}
+              bloom={0.6}
               speed={0.35}
               scale={1.8}
               style={{
-                height: "100%",
-                width: "100%",
                 position: "absolute",
                 top: 0,
                 left: 0,
+                width: "100%",
+                height: "100%",
               }}
             />
           </div>
