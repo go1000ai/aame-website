@@ -100,23 +100,23 @@ export default function Home() {
         <Navbar />
 
         {/* Hero with GodRays Background */}
-        <section ref={heroRef} className="relative min-h-[100dvh] flex items-center overflow-hidden">
-          {/* GodRays Shader Background */}
+        <section ref={heroRef} className="relative min-h-[100dvh] flex items-center overflow-hidden bg-white">
+          {/* GodRays Shader Background — subtle rays on white */}
           <div className="absolute inset-0 z-0 pointer-events-none">
             <GodRays
-              colorBack="#f0f4f8"
-              colors={["#08d1cecc", "#00f2febb", "#0a8b89aa", "#08d1ce99"]}
+              colorBack="#fdfdfd"
+              colors={["#08d1ce30", "#00f2fe25", "#08d1ce18", "#00f2fe20"]}
               colorBloom="#08d1ce"
               offsetX={0.85}
               offsetY={-1}
-              intensity={0.9}
-              spotty={0.5}
-              midSize={12}
-              midIntensity={0.3}
-              density={0.5}
-              bloom={0.6}
-              speed={0.35}
-              scale={1.8}
+              intensity={0.35}
+              spotty={0.3}
+              midSize={8}
+              midIntensity={0.1}
+              density={0.35}
+              bloom={0.2}
+              speed={0.3}
+              scale={2.0}
               style={{
                 position: "absolute",
                 top: 0,
@@ -129,17 +129,19 @@ export default function Home() {
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full pt-28 pb-16">
             <div className="grid grid-cols-12 gap-6 items-center">
-              {/* Left — Image with overlay */}
+              {/* Left — Image with light shade + parallax */}
               <FadeIn className="col-span-12 lg:col-span-7 relative order-2 lg:order-1">
-                <motion.div style={{ y: heroImageY }} className="overflow-hidden">
+                <motion.div style={{ y: heroImageY }} className="relative overflow-hidden">
                   <Image
                     alt="Medical Aesthetic Procedure"
-                    className="w-full h-[300px] sm:h-[420px] md:h-[520px] object-cover opacity-85 transition-all duration-700 shadow-clinical"
+                    className="w-full h-[300px] sm:h-[420px] md:h-[520px] object-cover transition-all duration-700 shadow-clinical"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3alre5sEC2no0PrvSC9BaQw60r9tJra8gmvxOn42zdgzCdzqfSxON_7iyWDr7Zbpa50qMWD6h3Z8iAacKCnJrgBxJyLS0PlZ9bIlkPpzlaoh7WS3QB6oZzbUKgEW8jUhqg03_zw312bROvMWr8rj0-MsEfQ05rG1nzcxLhw2XFnqq-P8lnhRDELMFvDB8rSjdMb2QyUDUU9zPrGoDG9V7k1QaI05DZYJpPLCthQaYIGElzNaUWRK9o4ih6Ay_lIQZ90wom7pyEU"
                     width={1200}
                     height={520}
                     priority
                   />
+                  {/* Light shade overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/40 via-transparent to-white/20" />
                 </motion.div>
                 <motion.div
                   initial={{ opacity: 0, x: 40, y: 20 }}
