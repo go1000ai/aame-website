@@ -130,11 +130,11 @@ export default function Home() {
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full pt-28 pb-16">
             <div className="grid grid-cols-12 gap-6 items-center">
               {/* Left — Image with overlay */}
-              <FadeIn className="col-span-12 lg:col-span-7 relative">
+              <FadeIn className="col-span-12 lg:col-span-7 relative order-2 lg:order-1">
                 <motion.div style={{ y: heroImageY }} className="overflow-hidden">
                   <Image
                     alt="Medical Aesthetic Procedure"
-                    className="w-full h-[420px] md:h-[520px] object-cover grayscale hover:grayscale-0 transition-all duration-700 shadow-clinical"
+                    className="w-full h-[300px] sm:h-[420px] md:h-[520px] object-cover opacity-85 transition-all duration-700 shadow-clinical"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3alre5sEC2no0PrvSC9BaQw60r9tJra8gmvxOn42zdgzCdzqfSxON_7iyWDr7Zbpa50qMWD6h3Z8iAacKCnJrgBxJyLS0PlZ9bIlkPpzlaoh7WS3QB6oZzbUKgEW8jUhqg03_zw312bROvMWr8rj0-MsEfQ05rG1nzcxLhw2XFnqq-P8lnhRDELMFvDB8rSjdMb2QyUDUU9zPrGoDG9V7k1QaI05DZYJpPLCthQaYIGElzNaUWRK9o4ih6Ay_lIQZ90wom7pyEU"
                     width={1200}
                     height={520}
@@ -161,7 +161,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.4 }}
-                className="col-span-12 lg:col-span-5 flex flex-col justify-center pt-16 lg:pt-0"
+                className="col-span-12 lg:col-span-5 flex flex-col justify-center items-center lg:items-start text-center lg:text-left pt-4 lg:pt-0 order-1 lg:order-2"
               >
                 <div className="flex items-center gap-3 mb-8">
                   <div className="bg-charcoal p-3">
@@ -191,16 +191,16 @@ export default function Home() {
                   Here
                 </h1>
 
-                <div className="border-t-2 border-charcoal pt-5 max-w-sm">
+                <div className="border-t-2 border-charcoal pt-5 max-w-sm w-full">
                   <p className="text-base leading-relaxed font-medium mb-6">
                     Hands-on training in injectables, skin rejuvenation, and body
                     contouring — taught by practitioners, not textbooks.
                   </p>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                     {/* Expandable CTA Button */}
                     <AnimatePresence initial={false}>
                       {!isExpanded && (
-                        <motion.div className="inline-block relative">
+                        <motion.div className="relative w-full sm:w-auto">
                           <motion.div
                             style={{ borderRadius: "4px" }}
                             layout
@@ -214,7 +214,7 @@ export default function Home() {
                             transition={{ delay: 0.1 }}
                             layout={false}
                             onClick={handleExpand}
-                            className="relative flex items-center gap-2 text-charcoal font-black uppercase text-xs tracking-widest px-7 py-3.5 cursor-pointer"
+                            className="relative w-full sm:w-auto flex items-center justify-center gap-2 text-charcoal font-black uppercase text-xs tracking-widest px-7 py-3.5 cursor-pointer"
                           >
                             Start Your Journey
                             <ArrowRight className="w-4 h-4" />
@@ -226,7 +226,7 @@ export default function Home() {
                       href="/courses"
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
-                      className="inline-block border-2 border-charcoal text-charcoal font-black uppercase text-xs tracking-widest px-7 py-3.5 hover:bg-charcoal hover:text-white transition-colors cursor-pointer"
+                      className="w-full sm:w-auto text-center border-2 border-charcoal text-charcoal font-black uppercase text-xs tracking-widest px-7 py-3.5 hover:bg-charcoal hover:text-white transition-colors cursor-pointer"
                     >
                       Browse Courses
                     </motion.a>
