@@ -131,18 +131,21 @@ export default function Home() {
             <div className="grid grid-cols-12 gap-6 items-center">
               {/* Left — Image with light shade + parallax */}
               <FadeIn className="col-span-12 lg:col-span-7 relative order-2 lg:order-1">
-                <motion.div style={{ y: heroImageY }} className="relative overflow-hidden">
-                  <Image
-                    alt="Medical Aesthetic Procedure"
-                    className="w-full h-[300px] sm:h-[420px] md:h-[520px] object-cover transition-all duration-700 shadow-clinical"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3alre5sEC2no0PrvSC9BaQw60r9tJra8gmvxOn42zdgzCdzqfSxON_7iyWDr7Zbpa50qMWD6h3Z8iAacKCnJrgBxJyLS0PlZ9bIlkPpzlaoh7WS3QB6oZzbUKgEW8jUhqg03_zw312bROvMWr8rj0-MsEfQ05rG1nzcxLhw2XFnqq-P8lnhRDELMFvDB8rSjdMb2QyUDUU9zPrGoDG9V7k1QaI05DZYJpPLCthQaYIGElzNaUWRK9o4ih6Ay_lIQZ90wom7pyEU"
-                    width={1200}
-                    height={520}
-                    priority
-                  />
+                <div className="relative overflow-hidden h-[300px] sm:h-[420px] md:h-[520px]">
+                  <motion.div style={{ y: heroImageY }} className="absolute inset-0">
+                    <Image
+                      alt="Medical Aesthetics Training Classroom"
+                      className="w-full h-[130%] object-cover"
+                      src="https://plus.unsplash.com/premium_photo-1719617673192-61b02470619d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1920"
+                      width={1920}
+                      height={1280}
+                      priority
+                    />
+                  </motion.div>
                   {/* Light shade overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/40 via-transparent to-white/20" />
-                </motion.div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/30 via-transparent to-white/10 z-10" />
+                  <div className="absolute inset-0 shadow-clinical" />
+                </div>
                 <motion.div
                   initial={{ opacity: 0, x: 40, y: 20 }}
                   animate={{ opacity: 1, x: 0, y: 0 }}

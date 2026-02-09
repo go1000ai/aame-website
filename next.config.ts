@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
         hostname: "storage.googleapis.com",
         pathname: "/msgsndr/**",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "plus.unsplash.com",
+      },
     ],
   },
 };
