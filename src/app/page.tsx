@@ -1,65 +1,597 @@
+"use client";
+
 import Image from "next/image";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { GodRays } from "@paper-design/shaders-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+function FadeIn({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.6, delay, ease: "easeOut" }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+type Course = {
+  num: string;
+  category: string;
+  title: string;
+  price: string;
+  featured?: boolean;
+};
+
+const courses: Course[] = [
+  { num: "01", category: "Body Tech", title: "Aparatologia Corporal", price: "$850.00" },
+  { num: "02", category: "Facial Tech", title: "Aparatologia Facial", price: "$650.00" },
+  { num: "03", category: "Injectables", title: "Botox Avanzado", price: "$1,400.00" },
+  { num: "04", category: "Injectables", title: "Botox Basico", price: "$1,150.00" },
+  { num: "05", category: "Skin Care", title: "Dermaplening", price: "$350.00" },
+  { num: "06", category: "Medical", title: "EKG Tech+ CPR BLS", price: "$1,016.00" },
+  { num: "07", category: "Skin Tightening", title: "Fibroblast", price: "$1,150.00" },
+  { num: "08", category: "Fillers & Volume", title: "Fillers Avanzado", price: "$1,250.00" },
+  { num: "09", category: "Fillers & Volume", title: "Fillers Basico", price: "$1,150.00" },
+  { num: "10", category: "Full Package", title: "Full Package", price: "$2,995.00", featured: true },
+  { num: "11", category: "Lifting", title: "Hilos de PDO", price: "$1,650.00" },
+  { num: "12", category: "Skin Care", title: "Hydradermoabración", price: "$150.00" },
+  { num: "13", category: "Body", title: "Linfático", price: "$450.00" },
+  { num: "14", category: "Body", title: "Maderoterapia", price: "$450.00" },
+  { num: "15", category: "Skin Care", title: "Microdermoabrasión", price: "$175.00" },
+  { num: "16", category: "Dermatology", title: "Microneedling", price: "$350.00" },
+  { num: "17", category: "Skin Care", title: "Peeling", price: "$650.00" },
+  { num: "18", category: "Medical", title: "Phlebotomy", price: "$1,150.00" },
+  { num: "19", category: "Blood Science", title: "Plasma PRP", price: "$650.00" },
+  { num: "20", category: "Body", title: "Reflexologia Corporal", price: "$800.00" },
+  { num: "21", category: "Body", title: "Reflexologia Podal y Craneal", price: "$600.00" },
+];
 
 export default function Home() {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroImageY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="bg-[#f8fafc] text-charcoal antialiased font-sans">
+      <Navbar />
+
+      {/* Hero with GodRays Background */}
+      <section ref={heroRef} className="relative min-h-[100dvh] flex items-center overflow-hidden">
+        {/* GodRays Shader Background */}
+        <div className="absolute inset-0 pointer-events-none">
+          <GodRays
+            colorBack="#fdfdfd"
+            colors={["#08d1ce30", "#00f2fe20", "#2c2c2c10", "#08d1ce18"]}
+            colorBloom="#08d1ce"
+            offsetX={0.8}
+            offsetY={-0.8}
+            intensity={0.4}
+            spotty={0.5}
+            midSize={8}
+            midIntensity={0}
+            density={0.35}
+            bloom={0.25}
+            speed={0.3}
+            scale={1.8}
+            style={{
+              height: "100%",
+              width: "100%",
+              position: "absolute",
+              top: 0,
+              left: 0,
+            }}
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full pt-28 pb-16">
+          <div className="grid grid-cols-12 gap-6 items-center">
+            {/* Left — Image with overlay */}
+            <FadeIn className="col-span-12 lg:col-span-7 relative">
+              <motion.div style={{ y: heroImageY }} className="overflow-hidden">
+                <Image
+                  alt="Medical Aesthetic Procedure"
+                  className="w-full h-[420px] md:h-[520px] object-cover grayscale hover:grayscale-0 transition-all duration-700 shadow-clinical"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3alre5sEC2no0PrvSC9BaQw60r9tJra8gmvxOn42zdgzCdzqfSxON_7iyWDr7Zbpa50qMWD6h3Z8iAacKCnJrgBxJyLS0PlZ9bIlkPpzlaoh7WS3QB6oZzbUKgEW8jUhqg03_zw312bROvMWr8rj0-MsEfQ05rG1nzcxLhw2XFnqq-P8lnhRDELMFvDB8rSjdMb2QyUDUU9zPrGoDG9V7k1QaI05DZYJpPLCthQaYIGElzNaUWRK9o4ih6Ay_lIQZ90wom7pyEU"
+                  width={1200}
+                  height={520}
+                  priority
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 40, y: 20 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.6 }}
+                className="absolute -bottom-8 left-4 sm:left-8 bg-primary p-8 sm:p-10 hidden md:block geometric-block max-w-xs shadow-xl"
+              >
+                <h2 className="text-3xl sm:text-4xl font-[Montserrat] font-extrabold text-charcoal leading-none mb-3 uppercase">
+                  Excellence in Training
+                </h2>
+                <p className="text-charcoal font-medium text-sm">
+                  Elevate your practice with clinically certified aesthetics courses.
+                </p>
+              </motion.div>
+            </FadeIn>
+
+            {/* Right — Headline & CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.4 }}
+              className="col-span-12 lg:col-span-5 flex flex-col justify-center pt-16 lg:pt-0"
+            >
+              <div className="flex items-center gap-3 mb-8">
+                <div className="bg-charcoal p-3">
+                  <span className="material-symbols-outlined text-primary text-4xl">
+                    medical_services
+                  </span>
+                </div>
+                <div className="border-l-4 border-primary pl-4">
+                  <span className="font-[Montserrat] font-extrabold text-3xl md:text-4xl uppercase tracking-tighter leading-none">
+                    AAME
+                  </span>
+                  <p className="text-[10px] uppercase tracking-widest text-primary font-bold">
+                    American Aesthetics Medical Education
+                  </p>
+                </div>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-[Montserrat] font-extrabold uppercase leading-[0.85] mb-6 sm:mb-8">
+                Your
+                <br />
+                Career
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#00f2fe]">
+                  Starts
+                </span>
+                <br />
+                Here
+              </h1>
+
+              <div className="border-t-2 border-charcoal pt-5 max-w-sm">
+                <p className="text-base leading-relaxed font-medium mb-6">
+                  Hands-on training in injectables, skin rejuvenation, and body
+                  contouring — taught by practitioners, not textbooks.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <motion.a
+                    href="/schedule"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="sparkle-btn inline-block text-charcoal font-black uppercase text-xs tracking-widest px-7 py-3.5 cursor-pointer"
+                  >
+                    View Schedule
+                  </motion.a>
+                  <motion.a
+                    href="/courses"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="inline-block border-2 border-charcoal text-charcoal font-black uppercase text-xs tracking-widest px-7 py-3.5 hover:bg-charcoal hover:text-white transition-colors cursor-pointer"
+                  >
+                    Browse Courses
+                  </motion.a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+
+        {/* About AAME */}
+        <section className="mb-32">
+          <FadeIn>
+            <div className="flex items-center gap-4 mb-16">
+              <span className="h-px flex-1 bg-charcoal opacity-20" />
+              <h2 className="text-2xl font-[Montserrat] font-black uppercase tracking-widest italic">
+                About AAME
+              </h2>
+              <span className="h-px flex-1 bg-charcoal opacity-20" />
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-12 gap-8 items-center">
+            <FadeIn className="col-span-12 lg:col-span-7">
+              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-[Montserrat] font-black uppercase leading-[0.9] mb-6">
+                Shaping the Future of
+                <br />
+                <span className="text-primary">Medical Aesthetics</span>
+              </h3>
+              <div className="h-1 w-24 bg-primary mb-8" />
+              <p className="text-lg leading-relaxed mb-6">
+                <strong>American Aesthetics Medical Education (AAME)</strong> is a
+                premier training institution dedicated to empowering medical
+                professionals and aspiring aestheticians with the knowledge,
+                hands-on skills, and clinical confidence they need to excel.
+              </p>
+              <p className="text-base leading-relaxed text-gray-600 mb-8">
+                From injectables and dermal fillers to advanced body contouring
+                and skin rejuvenation, our curriculum is designed by industry
+                practitioners who bring real-world expertise into every lesson.
+                Every course blends scientific rigor with artistic technique —
+                because great aesthetics is both a science and an art.
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                {[
+                  { value: "21+", label: "Courses" },
+                  { value: "2.5K+", label: "Trained" },
+                  { value: "98%", label: "Success Rate" },
+                  { value: "CME", label: "Accredited" },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="text-center"
+                  >
+                    <p className="text-3xl font-[Montserrat] font-black text-primary">
+                      {stat.value}
+                    </p>
+                    <p className="text-xs font-bold uppercase tracking-widest mt-1">
+                      {stat.label}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </FadeIn>
+
+            <FadeIn delay={0.2} className="col-span-12 lg:col-span-5">
+              <div className="grid grid-cols-2 gap-4">
+                <motion.div whileHover={{ scale: 1.03 }} className="shadow-clinical">
+                  <Image
+                    alt="Hands-on training at AAME"
+                    className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-700"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3alre5sEC2no0PrvSC9BaQw60r9tJra8gmvxOn42zdgzCdzqfSxON_7iyWDr7Zbpa50qMWD6h3Z8iAacKCnJrgBxJyLS0PlZ9bIlkPpzlaoh7WS3QB6oZzbUKgEW8jUhqg03_zw312bROvMWr8rj0-MsEfQ05rG1nzcxLhw2XFnqq-P8lnhRDELMFvDB8rSjdMb2QyUDUU9zPrGoDG9V7k1QaI05DZYJpPLCthQaYIGElzNaUWRK9o4ih6Ay_lIQZ90wom7pyEU"
+                    width={400}
+                    height={300}
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.03 }} className="shadow-clinical mt-8">
+                  <Image
+                    alt="Clinical environment at AAME"
+                    className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-700"
+                    src="https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7b9e85ccacffe1c20.jpeg"
+                    width={400}
+                    height={300}
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                </motion.div>
+              </div>
+              <div className="mt-6 bg-charcoal p-6">
+                <div className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-primary text-3xl mt-0.5">
+                    verified
+                  </span>
+                  <div>
+                    <p className="text-white font-bold text-sm uppercase tracking-wider mb-1">
+                      Our Promise
+                    </p>
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                      Every graduate leaves with the clinical confidence, certification,
+                      and portfolio to launch or advance their aesthetics career.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+        </section>
+
+        {/* Meet the Founder */}
+        <section className="mb-40">
+          <FadeIn>
+            <div className="flex items-center gap-4 mb-16">
+              <span className="h-px flex-1 bg-charcoal opacity-20" />
+              <h2 className="text-2xl font-[Montserrat] font-black uppercase tracking-widest italic">
+                Meet the Founder
+              </h2>
+              <span className="h-px flex-1 bg-charcoal opacity-20" />
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-12 gap-6 items-center">
+            {/* Portrait & Working Photos */}
+            <FadeIn className="col-span-12 lg:col-span-5 relative">
+              <div className="relative">
+                <div className="bg-charcoal p-3 shadow-2xl">
+                  <Image
+                    alt="Strani Mayorga - Founder of AAME"
+                    className="w-full h-[400px] sm:h-[500px] lg:h-[550px] object-cover object-top grayscale hover:grayscale-0 transition-all duration-700"
+                    src="https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7b9127758b46061bc.jpeg"
+                    width={600}
+                    height={550}
+                  />
+                </div>
+                <div className="absolute -top-6 -left-6 bg-primary w-32 h-32 -z-10 opacity-20" />
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="absolute -bottom-6 -right-6 bg-primary p-6 shadow-xl hidden md:block"
+                >
+                  <p className="text-charcoal font-black text-3xl">15+</p>
+                  <p className="text-charcoal text-xs font-bold uppercase tracking-widest">
+                    Years Experience
+                  </p>
+                </motion.div>
+              </div>
+            </FadeIn>
+
+            {/* Bio Content */}
+            <FadeIn delay={0.2} className="col-span-12 lg:col-span-7 lg:pl-12">
+              <div className="mb-6">
+                <h3 className="text-4xl sm:text-5xl lg:text-6xl font-[Montserrat] font-black uppercase leading-[0.85] mb-4">
+                  Strani
+                  <br />
+                  <span className="text-primary">Mayorga</span>
+                </h3>
+                <div className="h-1 w-20 bg-primary mb-4" />
+                <p className="text-sm font-bold uppercase tracking-widest text-primary">
+                  Founder &amp; Lead Educator, AAME
+                </p>
+              </div>
+
+              <p className="text-lg leading-relaxed mb-6">
+                With over <strong>15 years of specialized experience</strong> in
+                facial and body aesthetics, Strani Mayorga founded AAME with a
+                singular vision: enhancing natural beauty through education,
+                safety, and artistic precision.
+              </p>
+
+              <p className="text-base leading-relaxed text-gray-600 mb-8">
+                A <strong>Magister in Aesthetic Medicine</strong>, US-endorsed
+                Medical Assistant, certified Phlebotomist, and Certified
+                Injector, Strani brings a rare combination of scientific rigor
+                and artistic intuition to every course she teaches. Her approach
+                integrates technique and artistry to deliver natural, safe, and
+                highly personalized results — and she trains her students to do
+                the same.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8">
+                {[
+                  "Comprehensive Facial Rejuvenation",
+                  "Facial Harmonization",
+                  "Advanced Injection Techniques",
+                  "Body Contouring Procedures",
+                ].map((specialty, i) => (
+                  <motion.div
+                    key={specialty}
+                    initial={{ opacity: 0, x: -15 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.1 }}
+                    className="flex items-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-primary text-lg">
+                      check_circle
+                    </span>
+                    <span className="text-sm font-semibold">{specialty}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Action photos */}
+              <div className="grid grid-cols-2 gap-4">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="shadow-clinical"
+                >
+                  <Image
+                    alt="Strani Mayorga performing procedure"
+                    className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-500"
+                    src="https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7b9e85ccacffe1c20.jpeg"
+                    width={500}
+                    height={400}
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="shadow-clinical"
+                >
+                  <Image
+                    alt="Strani Mayorga in clinic"
+                    className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-500"
+                    src="https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc77fc451fc11eab846.jpeg"
+                    width={500}
+                    height={400}
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                </motion.div>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Certifications */}
+          <FadeIn delay={0.1} className="mt-20">
+            <div className="flex items-center gap-4 mb-10">
+              <div className="h-0.5 w-12 bg-primary" />
+              <h4 className="text-lg font-[Montserrat] font-black uppercase tracking-widest">
+                Certifications &amp; Credentials
+              </h4>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              {[
+                {
+                  src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7b912778bf16061aa.jpeg",
+                  alt: "Certification 1",
+                },
+                {
+                  src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7e2d75b3832254c54.jpeg",
+                  alt: "Certification 2",
+                },
+                {
+                  src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc77fc451b7a0eab847.jpeg",
+                  alt: "Certification 3",
+                },
+                {
+                  src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7e2d75b2a87254c55.jpeg",
+                  alt: "Certification 4",
+                },
+              ].map((cert, i) => (
+                <motion.div
+                  key={cert.alt}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                  whileHover={{ scale: 2.5, zIndex: 50 }}
+                  className="relative w-20 h-20 bg-white border border-slate-200 p-1.5 shadow-clinical cursor-pointer origin-center"
+                >
+                  <Image
+                    alt={cert.alt}
+                    className="w-full h-full object-contain"
+                    src={cert.src}
+                    width={80}
+                    height={80}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </FadeIn>
+        </section>
+
+        {/* Course Catalog & Pricing */}
+        <section id="pricing" className="mb-32">
+          <FadeIn>
+            <div className="flex items-center gap-4 mb-12">
+              <span className="h-px flex-1 bg-charcoal opacity-20" />
+              <h2 className="text-2xl font-[Montserrat] font-black uppercase tracking-widest italic">
+                Course Catalog &amp; Pricing
+              </h2>
+              <span className="h-px flex-1 bg-charcoal opacity-20" />
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {courses.map((course, i) => (
+              <FadeIn key={course.num} delay={Math.min(i * 0.05, 0.3)}>
+                <motion.div
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.3 }}
+                  className="group"
+                >
+                  {course.featured ? (
+                    <div className="bg-primary border border-slate-200 geometric-block overflow-hidden flex flex-col h-full shadow-clinical">
+                      <div className="bg-charcoal text-white px-4 py-2 flex justify-between items-center border-b border-charcoal">
+                        <span className="text-2xl font-black text-primary">{course.num}</span>
+                        <span className="text-xs font-bold uppercase tracking-tighter">{course.category}</span>
+                      </div>
+                      <div className="p-8 flex-grow">
+                        <div className="bg-charcoal text-white text-[10px] px-2 py-0.5 inline-block mb-4 font-bold uppercase tracking-widest">Best Value</div>
+                        <h3 className="text-2xl font-[Montserrat] font-black uppercase mb-2 text-charcoal">{course.title}</h3>
+                        <p className="text-xs font-bold uppercase opacity-70">Complete Certification Program</p>
+                      </div>
+                      <div className="bg-white p-5 flex justify-between items-center border-t border-charcoal">
+                        <span className="text-charcoal uppercase text-[10px] font-black tracking-widest">Bundle Price</span>
+                        <span className="text-charcoal text-2xl font-black tracking-tight">{course.price}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white border border-slate-200 geometric-block overflow-hidden flex flex-col h-full shadow-clinical">
+                      <div className="bg-primary text-charcoal px-4 py-2 flex justify-between items-center border-b border-charcoal">
+                        <span className="text-2xl font-black">{course.num}</span>
+                        <span className="text-xs font-bold uppercase tracking-tighter">{course.category}</span>
+                      </div>
+                      <div className="p-8 flex-grow">
+                        <h3 className="text-2xl font-[Montserrat] font-black uppercase mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
+                        <div className="h-0.5 w-12 bg-primary mb-4" />
+                      </div>
+                      <div className="bg-charcoal p-5 flex justify-between items-center">
+                        <span className="text-primary uppercase text-[10px] font-black tracking-widest">Online Cost</span>
+                        <span className="text-white text-2xl font-black tracking-tight">{course.price}</span>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+
+        {/* Professional Pathways */}
+        <section id="pathways" className="grid grid-cols-12 gap-6 mb-32 relative">
+          <FadeIn className="col-span-12 lg:col-span-5 bg-charcoal text-white p-8 sm:p-12 geometric-block relative z-20 shadow-2xl">
+            <h4 className="text-3xl sm:text-4xl lg:text-5xl font-[Montserrat] font-black uppercase leading-[0.85] mb-6 sm:mb-8 break-words">
+              Professional
+              <br />
+              <span className="text-primary">Pathways</span>
+            </h4>
+            <div className="space-y-6">
+              {[
+                "All courses include lifetime access to the AAME digital library and video modules.",
+                "Physical certificates are dispatched within 10 days of completion of the online exam.",
+                "Enrollment is open year-round with rolling start dates for all online programs.",
+              ].map((text, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.15 }}
+                  className="flex gap-4"
+                >
+                  <span className="text-primary font-black">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p className="text-sm font-medium border-l border-primary pl-4">
+                    {text}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="mt-12 w-full bg-primary text-charcoal font-black uppercase py-4 hover:bg-white transition-colors cursor-pointer"
+            >
+              Start Your Journey Now
+            </motion.button>
+          </FadeIn>
+
+          <FadeIn
+            delay={0.2}
+            className="col-span-12 lg:col-span-7 lg:ml-[-4rem] mt-12 lg:mt-24 z-10"
           >
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              alt="Clinical Environment"
+              className="w-full h-[400px] object-cover grayscale brightness-50 shadow-clinical"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm3alre5sEC2no0PrvSC9BaQw60r9tJra8gmvxOn42zdgzCdzqfSxON_7iyWDr7Zbpa50qMWD6h3Z8iAacKCnJrgBxJyLS0PlZ9bIlkPpzlaoh7WS3QB6oZzbUKgEW8jUhqg03_zw312bROvMWr8rj0-MsEfQ05rG1nzcxLhw2XFnqq-P8lnhRDELMFvDB8rSjdMb2QyUDUU9zPrGoDG9V7k1QaI05DZYJpPLCthQaYIGElzNaUWRK9o4ih6Ay_lIQZ90wom7pyEU"
+              width={1200}
+              height={400}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            <div className="mt-4 flex gap-2">
+              <div className="h-2 w-full bg-primary" />
+              <div className="h-2 w-24 bg-charcoal" />
+            </div>
+          </FadeIn>
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
 }

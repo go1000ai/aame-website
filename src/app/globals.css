@@ -1,26 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdfdfd;
+  --foreground: #2c2c2c;
+  --primary: #08d1ce;
+  --primary-light: #00f2fe;
+  --charcoal: #2c2c2c;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-charcoal: var(--charcoal);
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Montserrat", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", sans-serif;
+}
+
+/* Selection highlight */
+::selection {
+  background: rgba(8, 209, 206, 0.25);
+  color: #2c2c2c;
+}
+
+/* Sparkle CTA button */
+.sparkle-btn {
+  background: linear-gradient(135deg, #08d1ce 0%, #00f2fe 50%, #08d1ce 100%);
+  background-size: 200% auto;
+  transition: 0.4s ease;
+  box-shadow: 0 4px 15px 0 rgba(8, 209, 206, 0.35);
+}
+.sparkle-btn:hover {
+  background-position: right center;
+  box-shadow: 0 6px 25px 0 rgba(8, 209, 206, 0.55);
+  transform: translateY(-2px);
+}
+
+/* Glass navbar */
+.glass-nav {
+  backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.88);
+}
+
+/* Medical dot grid background */
+.medical-grid {
+  background-image: radial-gradient(circle, rgba(8, 209, 206, 0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Geometric clip-path cards */
+.geometric-block {
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
+  transition: all 0.3s ease;
+}
+.geometric-block:hover {
+  clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%);
+  transform: translateY(-4px);
+}
+
+/* Clinical shadow */
+.shadow-clinical {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06);
+}
+
+/* Smooth image loading */
+img {
+  transition: filter 0.5s ease;
+}
+
+/* Mobile touch targets */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+  }
+  .geometric-block {
+    clip-path: none;
+  }
+  .geometric-block:hover {
+    clip-path: none;
+  }
+}
+
+/* Safe area for notched phones */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  footer {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #08d1ce;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #07b8b5;
 }
