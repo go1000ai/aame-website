@@ -105,17 +105,17 @@ export default function Home() {
           <div className="absolute inset-0 pointer-events-none">
             <GodRays
               colorBack="#fdfdfd"
-              colors={["#08d1ce30", "#00f2fe20", "#2c2c2c10", "#08d1ce18"]}
+              colors={["#08d1ce50", "#00f2fe38", "#2c2c2c18", "#08d1ce30"]}
               colorBloom="#08d1ce"
               offsetX={0.8}
               offsetY={-0.8}
-              intensity={0.4}
+              intensity={0.6}
               spotty={0.5}
               midSize={8}
               midIntensity={0}
-              density={0.35}
-              bloom={0.25}
-              speed={0.3}
+              density={0.4}
+              bloom={0.35}
+              speed={0.35}
               scale={1.8}
               style={{
                 height: "100%",
