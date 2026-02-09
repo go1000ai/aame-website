@@ -163,7 +163,7 @@ export default function Home() {
                 transition={{ duration: 0.9, delay: 0.4 }}
                 className="col-span-12 lg:col-span-5 flex flex-col justify-center items-center lg:items-start text-center lg:text-left pt-4 lg:pt-0 order-1 lg:order-2"
               >
-                <div className="flex items-center gap-3 mb-8">
+                <div className="flex items-center justify-center lg:justify-start gap-3 mb-8">
                   <div className="bg-charcoal p-3">
                     <span className="material-symbols-outlined text-primary text-4xl">
                       medical_services
@@ -179,7 +179,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-[Montserrat] font-extrabold uppercase leading-[0.85] mb-6 sm:mb-8">
+                <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-7xl font-[Montserrat] font-extrabold uppercase leading-[0.85] mb-6 sm:mb-8">
                   Your
                   <br />
                   Career
@@ -191,7 +191,7 @@ export default function Home() {
                   Here
                 </h1>
 
-                <div className="border-t-2 border-charcoal pt-5 max-w-sm w-full">
+                <div className="border-t-2 border-charcoal pt-5 w-full max-w-sm mx-auto lg:mx-0">
                   <p className="text-base leading-relaxed font-medium mb-6">
                     Hands-on training in injectables, skin rejuvenation, and body
                     contouring — taught by practitioners, not textbooks.
@@ -252,13 +252,13 @@ export default function Home() {
             </FadeIn>
 
             <div className="grid grid-cols-12 gap-8 items-center">
-              <FadeIn className="col-span-12 lg:col-span-7">
+              <FadeIn className="col-span-12 lg:col-span-7 text-center lg:text-left">
                 <h3 className="text-3xl sm:text-4xl lg:text-5xl font-[Montserrat] font-black uppercase leading-[0.9] mb-6">
                   Shaping the Future of
                   <br />
                   <span className="text-primary">Medical Aesthetics</span>
                 </h3>
-                <div className="h-1 w-24 bg-primary mb-8" />
+                <div className="h-1 w-24 bg-primary mb-8 mx-auto lg:mx-0" />
                 <p className="text-lg leading-relaxed mb-6">
                   <strong>American Aesthetics Medical Education (AAME)</strong> is a
                   premier training institution dedicated to empowering medical
@@ -381,14 +381,14 @@ export default function Home() {
                 </div>
               </FadeIn>
 
-              <FadeIn delay={0.2} className="col-span-12 lg:col-span-7 lg:pl-12">
+              <FadeIn delay={0.2} className="col-span-12 lg:col-span-7 lg:pl-12 text-center lg:text-left">
                 <div className="mb-6">
                   <h3 className="text-4xl sm:text-5xl lg:text-6xl font-[Montserrat] font-black uppercase leading-[0.85] mb-4">
                     Strani
                     <br />
                     <span className="text-primary">Mayorga</span>
                   </h3>
-                  <div className="h-1 w-20 bg-primary mb-4" />
+                  <div className="h-1 w-20 bg-primary mb-4 mx-auto lg:mx-0" />
                   <p className="text-sm font-bold uppercase tracking-widest text-primary">
                     Founder &amp; Lead Educator, AAME
                   </p>
@@ -424,7 +424,7 @@ export default function Home() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: i * 0.1 }}
-                      className="flex items-center gap-2"
+                      className="flex items-center justify-center lg:justify-start gap-2"
                     >
                       <span className="material-symbols-outlined text-primary text-lg">
                         check_circle
@@ -461,13 +461,13 @@ export default function Home() {
 
             {/* Certifications */}
             <FadeIn delay={0.1} className="mt-20">
-              <div className="flex items-center gap-4 mb-10">
+              <div className="flex items-center justify-center lg:justify-start gap-4 mb-10">
                 <div className="h-0.5 w-12 bg-primary" />
                 <h4 className="text-lg font-[Montserrat] font-black uppercase tracking-widest">
                   Certifications &amp; Credentials
                 </h4>
               </div>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
                 {[
                   { src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7b912778bf16061aa.jpeg", alt: "Certification 1" },
                   { src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7e2d75b3832254c54.jpeg", alt: "Certification 2" },
