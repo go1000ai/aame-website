@@ -161,7 +161,7 @@ export default function EditCoursePage() {
             </span>
           </label>
           <input name="image_url" type="url" defaultValue={course.image_url} placeholder="https://storage.googleapis.com/msgsndr/..." className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary" />
-          <p className="text-xs text-gray-400 mt-1">Upload the image in Go1000.ai → Media, then paste the URL here.</p>
+          <p className="text-xs text-gray-400 mt-1">Paste a direct link to the course image.</p>
         </div>
 
         {/* Payment is handled automatically via Square Checkout */}

@@ -26,8 +26,6 @@ export type Course = {
     practice_month: boolean;
     zoom_sessions: boolean;
   };
-  ghl_payment_link_inperson: string;
-  ghl_payment_link_online: string;
   image_url: string;
   active: boolean;
   sort_order: number;

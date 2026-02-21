@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/browser";
 
 type SimpleCourse = { id: string; num: string; title: string };
 
@@ -36,7 +37,7 @@ export default function NewDiscountPage() {
   const [name, setName] = useState("");
   const [discountValue, setDiscountValue] = useState("");
   const [courseListOpen, setCourseListOpen] = useState(true);
-  const codeEdited = useRef(false); // track if user manually typed in code field
+  const codeEdited = useRef(false);
   const courseListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,7 +47,6 @@ export default function NewDiscountPage() {
       .catch(() => {});
   }, []);
 
-  // Collapse course list when clicking outside (if courses are selected)
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (
@@ -63,9 +63,8 @@ export default function NewDiscountPage() {
     }
   }, [allCourses, courseListOpen, selectedIds.size]);
 
-  // Auto-derive code from name + discount value
   useEffect(() => {
-    if (codeEdited.current) return; // user manually edited, don't override
+    if (codeEdited.current) return;
     if (name || discountValue) {
       setCode(deriveCode(name, discountValue));
     }
@@ -86,81 +85,36 @@ export default function NewDiscountPage() {
     setError("");
 
     const form = new FormData(e.currentTarget);
+    const finalCode = code.toUpperCase();
 
-    // Check for duplicate codes before creating
-    let finalCode = code.toUpperCase();
-    try {
-      const listRes = await fetch("/api/go1000/coupons");
-      if (listRes.ok) {
-        const listData = await listRes.json();
-        const existing = (listData.coupons || listData.data || []) as { code: string }[];
-        const existingCodes = new Set(existing.map((c) => c.code.toUpperCase()));
+    const supabase = createClient();
 
-        if (existingCodes.has(finalCode)) {
-          // Auto-generate a unique code by appending a number
-          let suffix = 2;
-          let candidate = `${finalCode.slice(0, 8)}${suffix}`;
-          while (existingCodes.has(candidate) && suffix < 100) {
-            suffix++;
-            candidate = `${finalCode.slice(0, 8)}${suffix}`;
-          }
-          finalCode = candidate;
-          setCode(finalCode);
-        }
-      }
-    } catch {
-      // If we can't check, proceed — the API will reject duplicates
-    }
+    // Check for duplicate code
+    const { data: existing } = await supabase
+      .from("specials")
+      .select("id")
+      .eq("coupon_code", finalCode)
+      .maybeSingle();
 
-    const startDateVal = form.get("startDate") as string;
-    const endDateVal = form.get("endDate") as string;
-
-    const body: Record<string, unknown> = {
-      name: form.get("name"),
-      code: finalCode,
-      discountType: form.get("discountType"),
-      discountValue: parseFloat(discountValue),
-      startDate: new Date(startDateVal + "T00:00:00").toISOString(),
-      maxRedemptions: parseInt(form.get("maxRedemptions") as string) || undefined,
-      courseIds: allCourses ? [] : Array.from(selectedIds),
-    };
-
-    if (endDateVal) {
-      body.endDate = new Date(endDateVal + "T23:59:59").toISOString();
-    }
-
-    const res = await fetch("/api/go1000/coupons", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      try {
-        const data = await res.json();
-        setError(data.error || "Failed to create coupon");
-      } catch {
-        setError(`Failed to create coupon (status ${res.status})`);
-      }
+    if (existing) {
+      setError(`A coupon with code "${finalCode}" already exists.`);
       setSaving(false);
       return;
     }
 
-    // Check for specials sync warning
-    try {
-      const data = await res.json();
-      if (data.specialsWarning) {
-        // Coupon created but specials sync failed — show warning briefly then redirect
-        setError(data.specialsWarning);
-        setTimeout(() => {
-          router.push("/admin/discounts");
-          router.refresh();
-        }, 3000);
-        setSaving(false);
-        return;
-      }
-    } catch {
-      // JSON already consumed or no body — fine
+    const { error: insertError } = await supabase.from("specials").insert({
+      coupon_code: finalCode,
+      coupon_name: form.get("name") as string,
+      discount_type: form.get("discountType") as string,
+      discount_value: parseFloat(discountValue) || 0,
+      course_ids: allCourses ? [] : Array.from(selectedIds),
+      active: true,
+    });
+
+    if (insertError) {
+      setError(insertError.message);
+      setSaving(false);
+      return;
     }
 
     router.push("/admin/discounts");
@@ -193,18 +147,13 @@ export default function NewDiscountPage() {
   function buildName(occasion: typeof OCCASIONS[number]) {
     const templates = occasion.templates;
     const template = templates[Math.floor(Math.random() * templates.length)];
-
-    // Build topic from user input or course context
     let topic = name.trim();
-    // Strip any previously generated name to get just the keyword
     if (topic.includes(" — ")) topic = "";
     if (topic.includes(":")) topic = "";
-
     if (!topic) {
       if (allCourses) {
         topic = "AAME";
       } else if (selectedIds.size === 1) {
-        // Use a short version of the course name (first 2-3 words)
         const full = selectedCourseNames[0] || "Course";
         topic = full.split(" ").slice(0, 3).join(" ");
       } else if (selectedIds.size > 1) {
@@ -213,7 +162,6 @@ export default function NewDiscountPage() {
         topic = "AAME";
       }
     }
-
     const season = getSeason();
     return template.replace("{topic}", topic).replace("{season}", season);
   }
@@ -226,7 +174,7 @@ export default function NewDiscountPage() {
         </Link>
         <div>
           <h1 className="text-2xl sm:text-3xl font-[Montserrat] font-bold text-charcoal">Create Coupon</h1>
-          <p className="text-gray-500 text-sm mt-1">New discount code via Go1000.ai</p>
+          <p className="text-gray-500 text-sm mt-1">New discount code</p>
         </div>
       </div>
 
@@ -235,8 +183,7 @@ export default function NewDiscountPage() {
       )}
 
       <form onSubmit={handleSubmit} className="bg-white border border-gray-200 p-4 sm:p-8 space-y-6">
-
-        {/* Step 1: Choose Course(s) — first */}
+        {/* Step 1: Choose Course(s) */}
         <div>
           <div className="flex items-center gap-2 mb-3">
             <span className="bg-charcoal text-white text-xs font-bold w-5 h-5 flex items-center justify-center">1</span>
@@ -259,7 +206,6 @@ export default function NewDiscountPage() {
 
           {!allCourses && (
             <div ref={courseListRef}>
-              {/* Collapsed summary — click to re-open */}
               {!courseListOpen && selectedIds.size > 0 ? (
                 <button
                   type="button"
@@ -375,36 +321,6 @@ export default function NewDiscountPage() {
                   className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary"
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1.5">Start Date</label>
-                <input
-                  name="startDate"
-                  required
-                  type="date"
-                  defaultValue={new Date().toISOString().split("T")[0]}
-                  className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1.5">
-                  End Date <span className="text-gray-400">(optional)</span>
-                </label>
-                <input
-                  name="endDate"
-                  type="date"
-                  className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs text-gray-500 mb-1.5">
-                Max Redemptions <span className="text-gray-400">(leave empty for unlimited)</span>
-              </label>
-              <input name="maxRedemptions" type="number" placeholder="Unlimited" className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary" />
             </div>
           </div>
         </div>

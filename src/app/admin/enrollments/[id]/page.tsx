@@ -140,12 +140,6 @@ export default function EnrollmentDetailPage() {
               <code className="bg-violet-100 px-2 py-1 font-mono text-sm text-violet-700">{enrollment.receipt_number}</code>
             </div>
           )}
-          {enrollment.ghl_order_id && (
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">GHL Order ID</p>
-              <code className="bg-gray-100 px-2 py-1 font-mono text-xs">{enrollment.ghl_order_id}</code>
-            </div>
-          )}
           {enrollment.square_order_id && (
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Square Order ID</p>

@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/browser";
+import type { Special } from "@/lib/supabase/types";
 
 type SimpleCourse = { id: string; num: string; title: string };
 
@@ -32,70 +34,45 @@ export default function EditDiscountPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Coupon fields
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
-  const [originalCode, setOriginalCode] = useState("");
   const [discountType, setDiscountType] = useState("percentage");
   const [discountValue, setDiscountValue] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [maxRedemptions, setMaxRedemptions] = useState("");
 
-  // Course linking
   const [courses, setCourses] = useState<SimpleCourse[]>([]);
   const [allCourses, setAllCourses] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [courseListOpen, setCourseListOpen] = useState(true);
+  const [active, setActive] = useState(true);
   const codeEdited = useRef(false);
   const courseListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const supabase = createClient();
     Promise.all([
-      fetch("/api/go1000/coupons").then((r) => r.json()),
+      supabase.from("specials").select("*").eq("id", id).single(),
       fetch("/api/courses").then((r) => r.json()).catch(() => []),
-      fetch("/api/specials").then((r) => r.json()).catch(() => ({ specials: [] })),
-    ])
-      .then(([couponData, courseData, specialsData]) => {
-        const coupons = couponData.coupons || couponData.data || [];
-        const coupon = coupons.find((c: { _id: string }) => c._id === id);
-
-        if (!coupon) {
-          setError("Coupon not found");
-          setLoading(false);
-          return;
-        }
-
-        setName(coupon.name || "");
-        setCode(coupon.code || "");
-        setOriginalCode(coupon.code || "");
-        setDiscountType(coupon.discountType || "percentage");
-        setDiscountValue(String(coupon.discountValue || ""));
-        setMaxRedemptions(coupon.maxRedemptions ? String(coupon.maxRedemptions) : "");
-
-        if (coupon.startDate) {
-          setStartDate(new Date(coupon.startDate).toISOString().split("T")[0]);
-        }
-        if (coupon.endDate) {
-          setEndDate(new Date(coupon.endDate).toISOString().split("T")[0]);
-        }
-
-        setCourses(courseData);
-
-        const special = (specialsData.specials || []).find(
-          (s: { coupon_code: string }) => s.coupon_code === coupon.code?.toUpperCase()
-        );
-        if (special && special.course_ids && special.course_ids.length > 0) {
-          setAllCourses(false);
-          setSelectedIds(new Set(special.course_ids));
-        }
-
+    ]).then(([{ data: special }, courseData]) => {
+      if (!special) {
+        setError("Discount not found");
         setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to load coupon data");
-        setLoading(false);
-      });
+        return;
+      }
+      const s = special as Special;
+      setName(s.coupon_name || "");
+      setCode(s.coupon_code || "");
+      setDiscountType(s.discount_type || "percentage");
+      setDiscountValue(String(s.discount_value || ""));
+      setActive(s.active);
+      setCourses(courseData);
+
+      if (s.course_ids && s.course_ids.length > 0) {
+        setAllCourses(false);
+        setSelectedIds(new Set(s.course_ids));
+      }
+
+      setLoading(false);
+    });
   }, [id]);
 
   useEffect(() => {
@@ -132,34 +109,21 @@ export default function EditDiscountPage() {
     setSaving(true);
     setError("");
 
-    const courseIds = allCourses ? [] : Array.from(selectedIds);
+    const supabase = createClient();
+    const { error: updateError } = await supabase
+      .from("specials")
+      .update({
+        coupon_name: name,
+        coupon_code: code.toUpperCase(),
+        discount_type: discountType,
+        discount_value: parseFloat(discountValue) || 0,
+        course_ids: allCourses ? [] : Array.from(selectedIds),
+        active,
+      })
+      .eq("id", id);
 
-    const body: Record<string, unknown> = {
-      name,
-      code: code.toUpperCase(),
-      oldCouponCode: originalCode,
-      discountType,
-      discountValue: parseFloat(discountValue),
-      startDate: startDate ? new Date(startDate + "T00:00:00").toISOString() : new Date().toISOString(),
-      courseIds,
-    };
-
-    if (endDate) {
-      body.endDate = new Date(endDate + "T23:59:59").toISOString();
-    }
-    if (maxRedemptions) {
-      body.maxRedemptions = parseInt(maxRedemptions) || undefined;
-    }
-
-    const res = await fetch(`/api/go1000/coupons/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error || "Failed to update coupon");
+    if (updateError) {
+      setError(updateError.message);
       setSaving(false);
       return;
     }
@@ -234,7 +198,6 @@ export default function EditDiscountPage() {
       )}
 
       <form onSubmit={handleSave} className="bg-white border border-gray-200 p-4 sm:p-8 space-y-6">
-
         {/* Step 1: Course(s) */}
         <div>
           <div className="flex items-center gap-2 mb-3">
@@ -373,42 +336,16 @@ export default function EditDiscountPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1.5">Start Date</label>
-                <input
-                  required
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1.5">
-                  End Date <span className="text-gray-400">(optional — auto-expires)</span>
-                </label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs text-gray-500 mb-1.5">
-                Max Redemptions <span className="text-gray-400">(leave empty for unlimited)</span>
-              </label>
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="number"
-                placeholder="Unlimited"
-                value={maxRedemptions}
-                onChange={(e) => setMaxRedemptions(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary"
+                type="checkbox"
+                checked={active}
+                onChange={() => setActive(!active)}
+                className="accent-primary w-4 h-4"
               />
-            </div>
+              <span className="text-sm font-medium">Active</span>
+              <span className="text-xs text-gray-400">(Inactive coupons won&apos;t apply at checkout)</span>
+            </label>
           </div>
         </div>
 
