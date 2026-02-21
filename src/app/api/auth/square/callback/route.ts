@@ -16,7 +16,7 @@ export async function GET(request: Request) {
   const state = url.searchParams.get("state");
   const error = url.searchParams.get("error");
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:7001";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aameaesthetics.com";
 
   if (error) {
     return NextResponse.redirect(

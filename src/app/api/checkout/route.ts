@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     discountCode: appliedDiscount,
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aameacademy.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aameaesthetics.com";
 
   try {
     const result = await createCheckoutLink({

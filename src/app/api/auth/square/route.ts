@@ -15,7 +15,7 @@ export async function GET() {
   }
 
   const state = crypto.randomUUID();
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:7001";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aameaesthetics.com";
 
   const params = new URLSearchParams({
     client_id: SQUARE_APP_ID,
