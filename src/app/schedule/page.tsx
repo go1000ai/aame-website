@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CourseDetailModal from "@/components/CourseDetailModal";
 import { createClient } from "@/lib/supabase/browser";
-import { SAMPLE_SCHEDULE } from "@/lib/sample-data";
-import type { CourseSchedule } from "@/lib/supabase/types";
+import { SAMPLE_SCHEDULE, SAMPLE_COURSES } from "@/lib/sample-data";
+import type { Course, CourseSchedule } from "@/lib/supabase/types";
 
 const categoryColors: Record<string, string> = {
   Injectables: "bg-primary text-charcoal",
@@ -46,27 +47,60 @@ function formatDate(dateStr: string) {
 
 export default function SchedulePage() {
   const [schedule, setSchedule] = useState<CourseSchedule[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [usingSample, setUsingSample] = useState(false);
   const [filter, setFilter] = useState<string>("all");
+  const [specials, setSpecials] = useState<
+    { coupon_code: string; discount_type: string; discount_value: number; course_ids: string[] }[]
+  >([]);
 
   useEffect(() => {
     const supabase = createClient();
-    supabase
-      .from("course_schedule")
-      .select("*")
-      .gte("date", new Date().toISOString().split("T")[0])
-      .order("date", { ascending: true })
-      .then(({ data, error }) => {
-        if (error || !data || data.length === 0) {
-          setSchedule(SAMPLE_SCHEDULE);
-          setUsingSample(true);
-        } else {
-          setSchedule(data);
-        }
-        setLoading(false);
-      });
+    // Fetch schedule, courses, and specials in parallel
+    Promise.all([
+      supabase
+        .from("course_schedule")
+        .select("*")
+        .gte("date", new Date().toISOString().split("T")[0])
+        .order("date", { ascending: true }),
+      supabase.from("courses").select("*").eq("active", true),
+      fetch("/api/specials").then((r) => r.json()),
+    ]).then(([scheduleRes, coursesRes, specialsRes]) => {
+      if (scheduleRes.error || !scheduleRes.data || scheduleRes.data.length === 0) {
+        setSchedule(SAMPLE_SCHEDULE);
+        setUsingSample(true);
+        // Use sample courses when using sample schedule
+        setCourses(
+          coursesRes.data && coursesRes.data.length > 0
+            ? coursesRes.data
+            : SAMPLE_COURSES
+        );
+      } else {
+        setSchedule(scheduleRes.data);
+        setCourses(coursesRes.data || []);
+      }
+      setSpecials(specialsRes.specials || []);
+      setLoading(false);
+    });
   }, []);
+
+  function handleReserve(session: CourseSchedule) {
+    // Find the matching course by course_id, exact name, or partial name match
+    const name = session.course_name.toLowerCase();
+    const course =
+      courses.find((c) => c.id === session.course_id) ||
+      courses.find((c) => c.title === session.course_name) ||
+      courses.find(
+        (c) =>
+          name.includes(c.title.toLowerCase()) ||
+          c.title.toLowerCase().includes(name)
+      );
+    if (course) {
+      setSelectedCourse(course);
+    }
+  }
 
   const categories = ["all", ...new Set(schedule.map((s) => s.category))];
   const filtered =
@@ -293,6 +327,7 @@ export default function SchedulePage() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
+                          onClick={() => handleReserve(course)}
                           className="sparkle-btn text-charcoal font-black uppercase text-xs tracking-widest px-6 py-3 cursor-pointer"
                         >
                           Reserve Spot
@@ -347,6 +382,20 @@ export default function SchedulePage() {
           </div>
         </motion.div>
       </main>
+
+      {selectedCourse && (
+        <CourseDetailModal
+          course={selectedCourse}
+          special={
+            specials.find(
+              (s) =>
+                s.course_ids.length === 0 ||
+                s.course_ids.includes(selectedCourse.id)
+            ) || null
+          }
+          onClose={() => setSelectedCourse(null)}
+        />
+      )}
 
       <Footer />
     </div>
