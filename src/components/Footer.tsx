@@ -24,27 +24,52 @@ export default function Footer() {
                 </p>
               </div>
             </div>
-            <p className="text-sm leading-relaxed mb-6">
+            <p className="text-sm leading-relaxed mb-4">
               Setting the global standard for medical aesthetic education and
               professional excellence.
             </p>
+            <div className="text-sm space-y-2 mb-6">
+              <p className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-primary text-base mt-0.5">location_on</span>
+                <span>430 Richmond Ave. Office 270<br />Houston, TX 77057</span>
+              </p>
+              <a href="tel:+17139275300" className="flex items-center gap-2 hover:text-primary transition-colors">
+                <span className="material-symbols-outlined text-primary text-base">call</span>
+                (713) 927-5300
+              </a>
+              <a href="mailto:aame0edu@gmail.com" className="flex items-center gap-2 hover:text-primary transition-colors">
+                <span className="material-symbols-outlined text-primary text-base">mail</span>
+                aame0edu@gmail.com
+              </a>
+            </div>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://www.facebook.com/aameaesthetics/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
-                aria-label="Website"
+                aria-label="Facebook"
               >
                 <span className="material-symbols-outlined">public</span>
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/strani.medicinaestetica/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors"
+                aria-label="Instagram"
+              >
+                <span className="material-symbols-outlined">photo_camera</span>
+              </a>
+              <a
+                href="mailto:aame0edu@gmail.com"
                 className="hover:text-primary transition-colors"
                 aria-label="Email"
               >
                 <span className="material-symbols-outlined">mail</span>
               </a>
               <a
-                href="#"
+                href="tel:+17139275300"
                 className="hover:text-primary transition-colors"
                 aria-label="Phone"
               >
@@ -65,19 +90,28 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Our Faculty
-                </a>
+                <Link
+                  href="/schedule"
+                  className="hover:text-primary transition-colors"
+                >
+                  Course Schedule
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Alumni Success
-                </a>
+                <Link
+                  href="/#contact"
+                  className="hover:text-primary transition-colors"
+                >
+                  Contact Us
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  FAQs
-                </a>
+                <Link
+                  href="/#pathways"
+                  className="hover:text-primary transition-colors"
+                >
+                  Professional Pathways
+                </Link>
               </li>
             </ul>
           </div>
@@ -86,24 +120,24 @@ export default function Footer() {
             <h5 className="text-white font-bold mb-6">Course Categories</h5>
             <ul className="space-y-4 text-sm">
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <Link href="/courses" className="hover:text-primary transition-colors">
                   Neuromodulators
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <Link href="/courses" className="hover:text-primary transition-colors">
                   Dermal Fillers
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <Link href="/courses" className="hover:text-primary transition-colors">
                   Skin Rejuvenation
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  IV Nutrition
-                </a>
+                <Link href="/courses" className="hover:text-primary transition-colors">
+                  Body Contouring
+                </Link>
               </li>
             </ul>
           </div>
@@ -135,9 +169,12 @@ export default function Footer() {
             <a href="#" className="hover:text-white transition-colors">
               Terms of Service
             </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Cookie Policy
-            </a>
+            <Link href="/student/login" className="hover:text-white transition-colors">
+              Student Portal
+            </Link>
+            <Link href="/admin/login" className="hover:text-white transition-colors">
+              Admin
+            </Link>
           </div>
         </div>
       </div>

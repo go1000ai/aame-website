@@ -5,11 +5,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useLanguage } from "@/lib/i18n";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hasSpecials, setHasSpecials] = useState(false);
   const pathname = usePathname();
+  const { lang, setLang, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -17,10 +20,21 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Check if there are active specials for badge indicator
+  useEffect(() => {
+    fetch("/api/specials")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.specials && data.specials.length > 0) setHasSpecials(true);
+      })
+      .catch(() => {});
+  }, []);
+
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/courses", label: "Courses" },
-    { href: "/schedule", label: "Schedule" },
+    { href: "/", label: t("nav.home") },
+    { href: "/courses", label: t("nav.courses") },
+    { href: "/schedule", label: t("nav.schedule") },
+    { href: "/specials", label: t("nav.specials"), badge: true },
   ];
 
   return (
@@ -50,7 +64,7 @@ export default function Navbar() {
                 AAME
               </span>
               <p className="text-[10px] uppercase tracking-widest text-primary font-semibold">
-                Aesthetics Education
+                {t("nav.subtitle")}
               </p>
             </div>
           </Link>
@@ -60,13 +74,16 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors relative ${
+                className={`text-sm font-medium transition-colors relative flex items-center gap-1.5 ${
                   pathname === link.href
                     ? "text-primary"
                     : "hover:text-primary"
                 }`}
               >
                 {link.label}
+                {"badge" in link && link.badge && hasSpecials && (
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                )}
                 {pathname === link.href && (
                   <motion.div
                     layoutId="nav-underline"
@@ -80,13 +97,27 @@ export default function Navbar() {
               href="#contact"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
-              Contact
+              {t("nav.contact")}
             </a>
+            <Link
+              href="/student/login"
+              className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-base">person</span>
+              {t("nav.student")}
+            </Link>
+            {/* Language toggle */}
+            <button
+              onClick={() => setLang(lang === "es" ? "en" : "es")}
+              className="text-xs font-bold uppercase tracking-wider border border-gray-300 px-2.5 py-1.5 hover:border-primary hover:text-primary transition-colors cursor-pointer"
+            >
+              {lang === "es" ? "EN" : "ES"}
+            </button>
             <Link
               href="/schedule"
               className="sparkle-btn text-charcoal px-6 py-2.5 text-sm font-bold uppercase tracking-wider"
             >
-              Book a Course
+              {t("nav.book")}
             </Link>
           </div>
 
@@ -117,7 +148,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`block text-sm font-medium transition-colors ${
+                  className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
                     pathname === link.href
                       ? "text-primary"
                       : "hover:text-primary"
@@ -125,6 +156,9 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
+                  {"badge" in link && link.badge && hasSpecials && (
+                    <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                  )}
                 </Link>
               ))}
               <a
@@ -132,14 +166,29 @@ export default function Navbar() {
                 className="block text-sm font-medium hover:text-primary transition-colors"
                 onClick={() => setMobileOpen(false)}
               >
-                Contact
+                {t("nav.contact")}
               </a>
+              <Link
+                href="/student/login"
+                className="text-sm font-medium hover:text-primary transition-colors flex items-center gap-1"
+                onClick={() => setMobileOpen(false)}
+              >
+                <span className="material-symbols-outlined text-base">person</span>
+                {t("nav.student")}
+              </Link>
+              {/* Language toggle */}
+              <button
+                onClick={() => { setLang(lang === "es" ? "en" : "es"); setMobileOpen(false); }}
+                className="text-xs font-bold uppercase tracking-wider border border-gray-300 px-3 py-2 hover:border-primary hover:text-primary transition-colors cursor-pointer w-fit"
+              >
+                {lang === "es" ? "English" : "Español"}
+              </button>
               <Link
                 href="/schedule"
                 className="sparkle-btn block text-center text-charcoal px-6 py-2.5 text-sm font-bold uppercase tracking-wider"
                 onClick={() => setMobileOpen(false)}
               >
-                Book a Course
+                {t("nav.book")}
               </Link>
             </div>
           </motion.div>

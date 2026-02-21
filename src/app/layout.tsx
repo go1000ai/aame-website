@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import Providers from "@/components/Providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AAME - American Aesthetics Medical Education",
   description:
-    "Master the art and science of medical aesthetics with world-class training from industry-leading practitioners. Accredited courses designed for medical professionals.",
-  keywords: ["aesthetics", "medical education", "botox", "fillers", "certification", "AAME", "Miami"],
+    "Domina el arte y la ciencia de la estética médica con entrenamiento de clase mundial. Cursos acreditados para profesionales médicos.",
+  keywords: ["estética", "educación médica", "botox", "fillers", "certificación", "AAME", "Houston"],
   openGraph: {
     title: "AAME - American Aesthetics Medical Education",
-    description: "Master medical aesthetics with world-class hands-on training. 21+ accredited courses.",
+    description: "Domina la estética médica con entrenamiento práctico de clase mundial. 21+ cursos acreditados.",
     type: "website",
   },
 };
@@ -19,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -32,7 +33,9 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

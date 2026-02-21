@@ -101,6 +101,12 @@ img {
   }
 }
 
+/* Shimmer animation for promo banners */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;

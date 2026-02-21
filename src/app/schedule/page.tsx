@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { supabase, supabaseConfigured, type CourseSchedule } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/browser";
+import { SAMPLE_SCHEDULE } from "@/lib/sample-data";
+import type { CourseSchedule } from "@/lib/supabase/types";
 
 const categoryColors: Record<string, string> = {
   Injectables: "bg-primary text-charcoal",
@@ -28,94 +30,6 @@ const statusConfig = {
   completed: { label: "Completed", color: "bg-gray-100 text-gray-500 border-gray-200" },
 };
 
-// Sample data shown when Supabase is not configured yet
-const sampleSchedule: CourseSchedule[] = [
-  {
-    id: "1",
-    course_name: "Botox Basico",
-    date: "2026-03-15",
-    time: "9:00 AM - 5:00 PM",
-    location: "AAME Training Center, Miami FL",
-    instructor: "Strani Mayorga",
-    spots_total: 12,
-    spots_available: 4,
-    status: "filling",
-    price: "$1,150.00",
-    category: "Injectables",
-    created_at: "",
-  },
-  {
-    id: "2",
-    course_name: "Botox Avanzado",
-    date: "2026-03-22",
-    time: "9:00 AM - 5:00 PM",
-    location: "AAME Training Center, Miami FL",
-    instructor: "Strani Mayorga",
-    spots_total: 10,
-    spots_available: 7,
-    status: "open",
-    price: "$1,400.00",
-    category: "Injectables",
-    created_at: "",
-  },
-  {
-    id: "3",
-    course_name: "Fillers Basico",
-    date: "2026-04-05",
-    time: "9:00 AM - 5:00 PM",
-    location: "AAME Training Center, Miami FL",
-    instructor: "Strani Mayorga",
-    spots_total: 12,
-    spots_available: 12,
-    status: "open",
-    price: "$1,150.00",
-    category: "Fillers & Volume",
-    created_at: "",
-  },
-  {
-    id: "4",
-    course_name: "Full Package",
-    date: "2026-04-12",
-    time: "9:00 AM - 6:00 PM",
-    location: "AAME Training Center, Miami FL",
-    instructor: "Strani Mayorga",
-    spots_total: 8,
-    spots_available: 0,
-    status: "sold_out",
-    price: "$2,995.00",
-    category: "Full Package",
-    created_at: "",
-  },
-  {
-    id: "5",
-    course_name: "Microneedling",
-    date: "2026-04-19",
-    time: "10:00 AM - 3:00 PM",
-    location: "AAME Training Center, Miami FL",
-    instructor: "Strani Mayorga",
-    spots_total: 15,
-    spots_available: 10,
-    status: "open",
-    price: "$350.00",
-    category: "Dermatology",
-    created_at: "",
-  },
-  {
-    id: "6",
-    course_name: "Plasma PRP",
-    date: "2026-05-03",
-    time: "9:00 AM - 4:00 PM",
-    location: "AAME Training Center, Miami FL",
-    instructor: "Strani Mayorga",
-    spots_total: 12,
-    spots_available: 9,
-    status: "open",
-    price: "$650.00",
-    category: "Blood Science",
-    created_at: "",
-  },
-];
-
 function formatDate(dateStr: string) {
   const date = new Date(dateStr + "T00:00:00");
   return {
@@ -137,31 +51,21 @@ export default function SchedulePage() {
   const [filter, setFilter] = useState<string>("all");
 
   useEffect(() => {
-    async function fetchSchedule() {
-      if (!supabaseConfigured || !supabase) {
-        setSchedule(sampleSchedule);
-        setUsingSample(true);
+    const supabase = createClient();
+    supabase
+      .from("course_schedule")
+      .select("*")
+      .gte("date", new Date().toISOString().split("T")[0])
+      .order("date", { ascending: true })
+      .then(({ data, error }) => {
+        if (error || !data || data.length === 0) {
+          setSchedule(SAMPLE_SCHEDULE);
+          setUsingSample(true);
+        } else {
+          setSchedule(data);
+        }
         setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("course_schedule")
-        .select("*")
-        .gte("date", new Date().toISOString().split("T")[0])
-        .order("date", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching schedule:", error);
-        setSchedule(sampleSchedule);
-        setUsingSample(true);
-      } else {
-        setSchedule(data || []);
-      }
-      setLoading(false);
-    }
-
-    fetchSchedule();
+      });
   }, []);
 
   const categories = ["all", ...new Set(schedule.map((s) => s.category))];
@@ -364,10 +268,26 @@ export default function SchedulePage() {
                     </div>
 
                     {/* Price & CTA */}
-                    <div className="flex flex-row md:flex-col items-center justify-between md:justify-center gap-4 p-6 md:border-l border-slate-100 md:min-w-[180px] shrink-0">
-                      <span className="text-2xl font-black tracking-tight">
-                        {course.price}
-                      </span>
+                    <div className="flex flex-row md:flex-col items-center justify-between md:justify-center gap-4 p-6 md:border-l border-slate-100 md:min-w-[200px] shrink-0">
+                      <div className="text-center">
+                        {course.price_discount_display && course.price_regular_display ? (
+                          <>
+                            <span className="text-gray-400 line-through text-sm block">
+                              {course.price_regular_display}
+                            </span>
+                            <span className="text-2xl font-black tracking-tight text-primary">
+                              {course.price_discount_display}
+                            </span>
+                            <span className="text-[10px] text-gray-400 block mt-0.5">
+                              with $200 reservation
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-2xl font-black tracking-tight">
+                            {course.price}
+                          </span>
+                        )}
+                      </div>
                       {course.status !== "sold_out" &&
                       course.status !== "completed" ? (
                         <motion.button
@@ -409,7 +329,7 @@ export default function SchedulePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <motion.a
-              href="#contact"
+              href="/#contact"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="sparkle-btn text-charcoal font-black uppercase text-sm tracking-widest px-8 py-4 inline-block cursor-pointer"
@@ -417,7 +337,7 @@ export default function SchedulePage() {
               Contact Us
             </motion.a>
             <motion.a
-              href="/"
+              href="/courses"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="border-2 border-primary text-primary font-black uppercase text-sm tracking-widest px-8 py-4 inline-block hover:bg-primary hover:text-charcoal transition-colors cursor-pointer"

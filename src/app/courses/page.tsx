@@ -3,7 +3,11 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useState } from "react";
+import CourseDetailModal from "@/components/CourseDetailModal";
+import { createClient } from "@/lib/supabase/browser";
+import { SAMPLE_COURSES } from "@/lib/sample-data";
+import type { Course } from "@/lib/supabase/types";
+import { useState, useEffect, useMemo } from "react";
 
 function FadeIn({
   children,
@@ -27,42 +31,36 @@ function FadeIn({
   );
 }
 
-type Course = {
-  num: string;
-  category: string;
-  title: string;
-  price: string;
-  featured?: boolean;
-};
-
-const courses: Course[] = [
-  { num: "01", category: "Body Tech", title: "Aparatologia Corporal", price: "$850.00" },
-  { num: "02", category: "Facial Tech", title: "Aparatologia Facial", price: "$650.00" },
-  { num: "03", category: "Injectables", title: "Botox Avanzado", price: "$1,400.00" },
-  { num: "04", category: "Injectables", title: "Botox Basico", price: "$1,150.00" },
-  { num: "05", category: "Skin Care", title: "Dermaplening", price: "$350.00" },
-  { num: "06", category: "Medical", title: "EKG Tech+ CPR BLS", price: "$1,016.00" },
-  { num: "07", category: "Skin Tightening", title: "Fibroblast", price: "$1,150.00" },
-  { num: "08", category: "Fillers & Volume", title: "Fillers Avanzado", price: "$1,250.00" },
-  { num: "09", category: "Fillers & Volume", title: "Fillers Basico", price: "$1,150.00" },
-  { num: "10", category: "Full Package", title: "Full Package", price: "$2,995.00", featured: true },
-  { num: "11", category: "Lifting", title: "Hilos de PDO", price: "$1,650.00" },
-  { num: "12", category: "Skin Care", title: "Hydradermoabración", price: "$150.00" },
-  { num: "13", category: "Body", title: "Linfático", price: "$450.00" },
-  { num: "14", category: "Body", title: "Maderoterapia", price: "$450.00" },
-  { num: "15", category: "Skin Care", title: "Microdermoabrasión", price: "$175.00" },
-  { num: "16", category: "Dermatology", title: "Microneedling", price: "$350.00" },
-  { num: "17", category: "Skin Care", title: "Peeling", price: "$650.00" },
-  { num: "18", category: "Medical", title: "Phlebotomy", price: "$1,150.00" },
-  { num: "19", category: "Blood Science", title: "Plasma PRP", price: "$650.00" },
-  { num: "20", category: "Body", title: "Reflexologia Corporal", price: "$800.00" },
-  { num: "21", category: "Body", title: "Reflexologia Podal y Craneal", price: "$600.00" },
-];
-
-const categories = ["All", ...new Set(courses.map((c) => c.category))] as string[];
-
 export default function CoursesPage() {
+  const [courses, setCourses] = useState<Course[]>(SAMPLE_COURSES);
   const [filter, setFilter] = useState("All");
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("courses")
+      .select("*")
+      .eq("active", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data && data.length > 0) setCourses(data);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (selectedCourse) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [selectedCourse]);
+
+  const categories = useMemo(
+    () => ["All", ...new Set(courses.map((c) => c.category))],
+    [courses]
+  );
 
   const filtered = filter === "All" ? courses : courses.filter((c) => c.category === filter);
 
@@ -93,7 +91,7 @@ export default function CoursesPage() {
               </div>
             </div>
             <p className="text-sm uppercase tracking-widest font-semibold max-w-lg">
-              21 professional certification courses in medical aesthetics, body
+              {courses.length} professional certification courses in medical aesthetics, body
               contouring, injectables, and more.
             </p>
           </motion.div>
@@ -130,7 +128,8 @@ export default function CoursesPage() {
               <motion.div
                 whileHover={{ y: -6 }}
                 transition={{ duration: 0.3 }}
-                className="group h-full"
+                className="group h-full cursor-pointer"
+                onClick={() => setSelectedCourse(course)}
               >
                 {course.featured ? (
                   <div className="bg-primary border border-slate-200 geometric-block overflow-hidden flex flex-col h-full shadow-clinical">
@@ -143,9 +142,14 @@ export default function CoursesPage() {
                       <h3 className="text-2xl font-[Montserrat] font-black uppercase mb-2 text-charcoal">{course.title}</h3>
                       <p className="text-xs font-bold uppercase opacity-70">Complete Certification Program</p>
                     </div>
-                    <div className="bg-white p-5 flex justify-between items-center border-t border-charcoal">
-                      <span className="text-charcoal uppercase text-[10px] font-black tracking-widest">Bundle Price</span>
-                      <span className="text-charcoal text-2xl font-black tracking-tight">{course.price}</span>
+                    <div className="bg-white p-5 border-t border-charcoal">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-charcoal uppercase text-[10px] font-black tracking-widest">With $200 Reservation</span>
+                        <div className="text-right">
+                          <span className="text-gray-400 line-through text-sm mr-2">{course.price_regular_display}</span>
+                          <span className="text-charcoal text-2xl font-black tracking-tight">{course.price_discount_display}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -157,10 +161,21 @@ export default function CoursesPage() {
                     <div className="p-8 flex-grow">
                       <h3 className="text-2xl font-[Montserrat] font-black uppercase mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
                       <div className="h-0.5 w-12 bg-primary mb-4" />
+                      {(course.has_inperson && course.has_online) && (
+                        <div className="flex gap-2">
+                          <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 uppercase font-bold tracking-wider">In-Person</span>
+                          <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 uppercase font-bold tracking-wider">Online</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="bg-charcoal p-5 flex justify-between items-center">
-                      <span className="text-primary uppercase text-[10px] font-black tracking-widest">Online Cost</span>
-                      <span className="text-white text-2xl font-black tracking-tight">{course.price}</span>
+                    <div className="bg-charcoal p-5">
+                      <div className="flex justify-between items-baseline">
+                        <span className="text-primary uppercase text-[10px] font-black tracking-widest">With Reservation</span>
+                        <div className="text-right">
+                          <span className="text-gray-500 line-through text-sm mr-2">{course.price_regular_display}</span>
+                          <span className="text-white text-2xl font-black tracking-tight">{course.price_discount_display}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -194,7 +209,7 @@ export default function CoursesPage() {
               View Schedule
             </motion.a>
             <motion.a
-              href="#contact"
+              href="/#contact"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className="border-2 border-primary text-primary font-black uppercase text-sm tracking-widest px-8 py-4 inline-block hover:bg-primary hover:text-charcoal transition-colors cursor-pointer"
@@ -206,6 +221,14 @@ export default function CoursesPage() {
       </main>
 
       <Footer />
+
+      {/* Course Detail Modal */}
+      {selectedCourse && (
+        <CourseDetailModal
+          course={selectedCourse}
+          onClose={() => setSelectedCourse(null)}
+        />
+      )}
     </div>
   );
 }

@@ -7,6 +7,11 @@ import { X, Check, ArrowRight } from "lucide-react";
 import { GodRays, MeshGradient } from "@paper-design/shaders-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CourseDetailModal from "@/components/CourseDetailModal";
+import { createClient } from "@/lib/supabase/browser";
+import { SAMPLE_COURSES } from "@/lib/sample-data";
+import type { Course } from "@/lib/supabase/types";
+import { useLanguage } from "@/lib/i18n";
 
 function FadeIn({
   children,
@@ -30,45 +35,72 @@ function FadeIn({
   );
 }
 
-type Course = {
-  num: string;
-  category: string;
-  title: string;
-  price: string;
-  featured?: boolean;
-};
-
-const courses: Course[] = [
-  { num: "01", category: "Body Tech", title: "Aparatologia Corporal", price: "$850.00" },
-  { num: "02", category: "Facial Tech", title: "Aparatologia Facial", price: "$650.00" },
-  { num: "03", category: "Injectables", title: "Botox Avanzado", price: "$1,400.00" },
-  { num: "04", category: "Injectables", title: "Botox Basico", price: "$1,150.00" },
-  { num: "05", category: "Skin Care", title: "Dermaplening", price: "$350.00" },
-  { num: "06", category: "Medical", title: "EKG Tech+ CPR BLS", price: "$1,016.00" },
-  { num: "07", category: "Skin Tightening", title: "Fibroblast", price: "$1,150.00" },
-  { num: "08", category: "Fillers & Volume", title: "Fillers Avanzado", price: "$1,250.00" },
-  { num: "09", category: "Fillers & Volume", title: "Fillers Basico", price: "$1,150.00" },
-  { num: "10", category: "Full Package", title: "Full Package", price: "$2,995.00", featured: true },
-  { num: "11", category: "Lifting", title: "Hilos de PDO", price: "$1,650.00" },
-  { num: "12", category: "Skin Care", title: "Hydradermoabración", price: "$150.00" },
-  { num: "13", category: "Body", title: "Linfático", price: "$450.00" },
-  { num: "14", category: "Body", title: "Maderoterapia", price: "$450.00" },
-  { num: "15", category: "Skin Care", title: "Microdermoabrasión", price: "$175.00" },
-  { num: "16", category: "Dermatology", title: "Microneedling", price: "$350.00" },
-  { num: "17", category: "Skin Care", title: "Peeling", price: "$650.00" },
-  { num: "18", category: "Medical", title: "Phlebotomy", price: "$1,150.00" },
-  { num: "19", category: "Blood Science", title: "Plasma PRP", price: "$650.00" },
-  { num: "20", category: "Body", title: "Reflexologia Corporal", price: "$800.00" },
-  { num: "21", category: "Body", title: "Reflexologia Podal y Craneal", price: "$600.00" },
-];
 
 export default function Home() {
+  const { t } = useLanguage();
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
   const heroImageY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+
+  // Course data from Supabase (falls back to sample data)
+  const [courses, setCourses] = useState<Course[]>(SAMPLE_COURSES);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  // Map of courseId → special info (code, discount) for badge display
+  type SpecialInfo = { coupon_code: string; discount_type: string; discount_value: number };
+  const [courseSpecials, setCourseSpecials] = useState<Map<string, SpecialInfo>>(new Map());
+  const [hasAnySpecials, setHasAnySpecials] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("courses")
+      .select("*")
+      .eq("active", true)
+      .order("sort_order")
+      .then(({ data }) => {
+        if (data && data.length > 0) setCourses(data);
+      });
+
+    // Fetch active specials — build a map of courseId → special info for badge + code display
+    fetch("/api/specials")
+      .then((r) => r.json())
+      .then((data) => {
+        const specials = data.specials || [];
+        if (specials.length > 0) {
+          setHasAnySpecials(true);
+          const map = new Map<string, SpecialInfo>();
+          for (const s of specials) {
+            if (s.course_ids && s.course_ids.length > 0) {
+              const info: SpecialInfo = {
+                coupon_code: s.coupon_code,
+                discount_type: s.discount_type,
+                discount_value: s.discount_value,
+              };
+              for (const cid of s.course_ids) map.set(cid, info);
+            }
+          }
+          setCourseSpecials(map);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Helper: compute promo price after coupon discount
+  function getPromoPrice(course: Course): string | null {
+    const special = courseSpecials.get(course.id);
+    if (!special) return null;
+    const baseCents = course.price_discount_cents;
+    let finalCents: number;
+    if (special.discount_type === "percentage") {
+      finalCents = Math.round(baseCents * (1 - special.discount_value / 100));
+    } else {
+      finalCents = Math.max(0, baseCents - special.discount_value * 100);
+    }
+    return `$${(finalCents / 100).toLocaleString("en-US", { minimumFractionDigits: 0 })}`;
+  }
 
   // Expandable CTA state
   const [isExpanded, setIsExpanded] = useState(false);
@@ -86,13 +118,13 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (isExpanded) {
+    if (isExpanded || selectedCourse) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
     return () => { document.body.style.overflow = "unset"; };
-  }, [isExpanded]);
+  }, [isExpanded, selectedCourse]);
 
   return (
     <>
@@ -515,12 +547,21 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {courses.map((course, i) => (
-                <FadeIn key={course.num} delay={Math.min(i * 0.05, 0.3)}>
+                <FadeIn key={course.num} delay={Math.min(i * 0.05, 0.3)} className="h-full">
                   <motion.div
                     whileHover={{ y: -6 }}
                     transition={{ duration: 0.3 }}
-                    className="group"
+                    className="group cursor-pointer relative h-full"
+                    onClick={() => setSelectedCourse(course)}
                   >
+                    {/* Diagonal ribbon badge — corner special indicator */}
+                    {courseSpecials.has(course.id) && (
+                      <div className="absolute top-0 right-0 z-10 overflow-hidden w-24 h-24 pointer-events-none">
+                        <span className="absolute top-[10px] right-[-28px] w-[120px] text-center rotate-45 bg-red-500 text-white text-[9px] font-black uppercase tracking-wider py-1 shadow-md block">
+                          {t("catalog.especial")}
+                        </span>
+                      </div>
+                    )}
                     {course.featured ? (
                       <div className="bg-primary border border-slate-200 geometric-block overflow-hidden flex flex-col h-full shadow-clinical">
                         <div className="bg-charcoal text-white px-4 py-2 flex justify-between items-center border-b border-charcoal">
@@ -528,14 +569,36 @@ export default function Home() {
                           <span className="text-xs font-bold uppercase tracking-tighter">{course.category}</span>
                         </div>
                         <div className="p-8 flex-grow">
-                          <div className="bg-charcoal text-white text-[10px] px-2 py-0.5 inline-block mb-4 font-bold uppercase tracking-widest">Best Value</div>
+                          <div className="bg-charcoal text-white text-[10px] px-2 py-0.5 inline-block mb-4 font-bold uppercase tracking-widest">Mejor Valor</div>
                           <h3 className="text-2xl font-[Montserrat] font-black uppercase mb-2 text-charcoal">{course.title}</h3>
-                          <p className="text-xs font-bold uppercase opacity-70">Complete Certification Program</p>
+                          <p className="text-xs font-bold uppercase opacity-70">Programa Completo de Certificación</p>
                         </div>
-                        <div className="bg-white p-5 flex justify-between items-center border-t border-charcoal">
-                          <span className="text-charcoal uppercase text-[10px] font-black tracking-widest">Bundle Price</span>
-                          <span className="text-charcoal text-2xl font-black tracking-tight">{course.price}</span>
+                        <div className="bg-white p-5 border-t border-charcoal">
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-charcoal uppercase text-[10px] font-black tracking-widest">Con Reservación de $200</span>
+                            <div className="text-right">
+                              {courseSpecials.has(course.id) ? (
+                                <>
+                                  <span className="text-gray-400 line-through text-xs mr-1">{course.price_regular_display}</span>
+                                  <span className="text-red-500 line-through text-sm mr-2">{course.price_discount_display}</span>
+                                  <span className="text-red-600 text-2xl font-black tracking-tight">{getPromoPrice(course)}</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="text-gray-400 line-through text-sm mr-2">{course.price_regular_display}</span>
+                                  <span className="text-charcoal text-2xl font-black tracking-tight">{course.price_discount_display}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
                         </div>
+                        {courseSpecials.has(course.id) && (
+                          <div className="bg-red-500 text-white text-center py-2 px-3">
+                            <span className="text-[11px] font-bold">
+                              {t("catalog.code")}: <span className="font-mono bg-white/20 px-1.5 py-0.5 tracking-wider">{courseSpecials.get(course.id)!.coupon_code}</span>
+                            </span>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="bg-white border border-slate-200 geometric-block overflow-hidden flex flex-col h-full shadow-clinical">
@@ -546,11 +609,39 @@ export default function Home() {
                         <div className="p-8 flex-grow">
                           <h3 className="text-2xl font-[Montserrat] font-black uppercase mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
                           <div className="h-0.5 w-12 bg-primary mb-4" />
+                          {(course.has_inperson && course.has_online) && (
+                            <div className="flex gap-2">
+                              <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 uppercase font-bold tracking-wider">Presencial</span>
+                              <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 uppercase font-bold tracking-wider">En Línea</span>
+                            </div>
+                          )}
                         </div>
-                        <div className="bg-charcoal p-5 flex justify-between items-center">
-                          <span className="text-primary uppercase text-[10px] font-black tracking-widest">Online Cost</span>
-                          <span className="text-white text-2xl font-black tracking-tight">{course.price}</span>
+                        <div className="bg-charcoal p-5">
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-primary uppercase text-[10px] font-black tracking-widest">Con Reservación</span>
+                            <div className="text-right">
+                              {courseSpecials.has(course.id) ? (
+                                <>
+                                  <span className="text-gray-600 line-through text-xs mr-1">{course.price_regular_display}</span>
+                                  <span className="text-red-400 line-through text-sm mr-2">{course.price_discount_display}</span>
+                                  <span className="text-red-400 text-2xl font-black tracking-tight">{getPromoPrice(course)}</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="text-gray-500 line-through text-sm mr-2">{course.price_regular_display}</span>
+                                  <span className="text-white text-2xl font-black tracking-tight">{course.price_discount_display}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
                         </div>
+                        {courseSpecials.has(course.id) && (
+                          <div className="bg-red-500 text-white text-center py-2 px-3">
+                            <span className="text-[11px] font-bold">
+                              {t("catalog.code")}: <span className="font-mono bg-white/20 px-1.5 py-0.5 tracking-wider">{courseSpecials.get(course.id)!.coupon_code}</span>
+                            </span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </motion.div>
@@ -658,7 +749,7 @@ export default function Home() {
                       Our Location
                     </h3>
                     <p className="text-gray-300 text-lg leading-relaxed">
-                      6430 Richmond Ave. Off. 270
+                      430 Richmond Ave. Office 270
                       <br />
                       Houston, TX 77057
                     </p>
@@ -691,7 +782,7 @@ export default function Home() {
                   {/* Google Maps & Waze Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3">
                     <motion.a
-                      href="https://www.google.com/maps/dir/?api=1&destination=6430+Richmond+Ave+Suite+270+Houston+TX+77057"
+                      href="https://www.google.com/maps/dir/?api=1&destination=430+Richmond+Ave+Office+270+Houston+TX+77057"
                       target="_blank"
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.03 }}
@@ -943,6 +1034,15 @@ export default function Home() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Course Detail Modal */}
+      {selectedCourse && (
+        <CourseDetailModal
+          course={selectedCourse}
+          special={courseSpecials.get(selectedCourse.id) || null}
+          onClose={() => setSelectedCourse(null)}
+        />
+      )}
     </>
   );
 }
