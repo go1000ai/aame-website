@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import type { Course } from "@/lib/supabase/types";
+import VideoUploader from "../../VideoUploader";
 
 function formatPrice(cents: number): string {
   return "$" + (cents / 100).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -54,6 +55,7 @@ export default function EditCoursePage() {
       has_inperson: form.get("has_inperson") === "on",
       has_online: form.get("has_online") === "on",
       image_url: form.get("image_url"),
+      video_url: form.get("video_url"),
       active: form.get("active") === "on",
       sort_order: parseInt(form.get("sort_order") as string) || 0,
     };
@@ -163,6 +165,8 @@ export default function EditCoursePage() {
           <input name="image_url" type="url" defaultValue={course.image_url} placeholder="https://storage.googleapis.com/msgsndr/..." className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary" />
           <p className="text-xs text-gray-400 mt-1">Paste a direct link to the course image.</p>
         </div>
+
+        <VideoUploader defaultValue={course.video_url} />
 
         {/* Payment is handled automatically via Square Checkout */}
 

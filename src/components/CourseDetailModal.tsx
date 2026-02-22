@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import type { Course } from "@/lib/supabase/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/i18n";
 
 type SpecialInfo = {
@@ -20,7 +20,19 @@ type Props = {
 
 export default function CourseDetailModal({ course, special, onClose }: Props) {
   const { t } = useLanguage();
+  // Auto-select modality when only one option exists (skip Step 1)
+  const hasBoth = course ? course.has_inperson && course.has_online : false;
+
   const [modality, setModality] = useState<"inperson" | "online" | null>(null);
+
+  useEffect(() => {
+    if (course && !course.has_inperson !== !course.has_online) {
+      // Only one modality available — auto-select it
+      setModality(course.has_inperson ? "inperson" : "online");
+    } else {
+      setModality(null);
+    }
+  }, [course?.id]);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [showZelleForm, setShowZelleForm] = useState(false);
   const [zelleLoading, setZelleLoading] = useState(false);
@@ -270,13 +282,15 @@ export default function CourseDetailModal({ course, special, onClose }: Props) {
             ) : (
               /* Step 2: Course Details + Pricing + Payment */
               <div>
-                <button
-                  onClick={handleBack}
-                  className="flex items-center gap-1 text-gray-400 hover:text-charcoal text-sm mb-6 transition-colors cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-base">arrow_back</span>
-                  Change modality
-                </button>
+                {hasBoth && (
+                  <button
+                    onClick={handleBack}
+                    className="flex items-center gap-1 text-gray-400 hover:text-charcoal text-sm mb-6 transition-colors cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-base">arrow_back</span>
+                    Change modality
+                  </button>
+                )}
 
                 <div className="flex items-center gap-3 mb-6">
                   <span className="material-symbols-outlined text-primary text-2xl">

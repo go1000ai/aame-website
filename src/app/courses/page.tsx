@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CourseDetailModal from "@/components/CourseDetailModal";
 import { createClient } from "@/lib/supabase/browser";
 import { SAMPLE_COURSES } from "@/lib/sample-data";
 import type { Course } from "@/lib/supabase/types";
+import { slugify } from "@/lib/seo";
 import { useState, useEffect, useMemo } from "react";
 
 function FadeIn({
@@ -141,6 +143,14 @@ export default function CoursesPage() {
                       <div className="bg-charcoal text-white text-[10px] px-2 py-0.5 inline-block mb-4 font-bold uppercase tracking-widest">Best Value</div>
                       <h3 className="text-2xl font-[Montserrat] font-black uppercase mb-2 text-charcoal">{course.title}</h3>
                       <p className="text-xs font-bold uppercase opacity-70">Complete Certification Program</p>
+                      <Link
+                        href={`/courses/${slugify(course.title)}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 mt-3 text-xs font-bold uppercase tracking-wider text-charcoal/80 hover:text-charcoal transition-colors"
+                      >
+                        View Details
+                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                      </Link>
                     </div>
                     <div className="bg-white p-5 border-t border-charcoal">
                       <div className="flex justify-between items-baseline">
@@ -167,6 +177,14 @@ export default function CoursesPage() {
                           <span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 uppercase font-bold tracking-wider">Online</span>
                         </div>
                       )}
+                      <Link
+                        href={`/courses/${slugify(course.title)}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 mt-3 text-xs font-bold uppercase tracking-wider text-primary hover:text-charcoal transition-colors"
+                      >
+                        View Details
+                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                      </Link>
                     </div>
                     <div className="bg-charcoal p-5">
                       <div className="flex justify-between items-baseline">

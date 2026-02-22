@@ -27,6 +27,7 @@ export type Course = {
     zoom_sessions: boolean;
   };
   image_url: string;
+  video_url: string;
   active: boolean;
   sort_order: number;
   created_at: string;

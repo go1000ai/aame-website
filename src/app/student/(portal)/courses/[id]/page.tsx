@@ -68,6 +68,17 @@ export default async function StudentCourseDetailPage({
         )}
       </div>
 
+      {/* Course Description */}
+      {course?.description && (
+        <div className="bg-white border border-gray-200 p-6 mb-6">
+          <h2 className="font-bold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary">description</span>
+            About This Course
+          </h2>
+          <p className="text-gray-600 text-sm leading-relaxed">{course.description}</p>
+        </div>
+      )}
+
       {/* Progress Timeline */}
       <div className="bg-white border border-gray-200 p-6 mb-6">
         <h2 className="font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -261,19 +272,45 @@ export default async function StudentCourseDetailPage({
                   Course Video
                 </h2>
               </div>
-              <div className="aspect-video bg-charcoal flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <span className="material-symbols-outlined text-6xl text-gray-600 mb-3 block">
-                    videocam
-                  </span>
-                  <p className="text-sm font-medium text-gray-400">
-                    Video content will be available here.
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    Your instructor will provide the video link via email.
-                  </p>
+              {course?.video_url ? (
+                isDirectVideo(course.video_url) ? (
+                  <div className="aspect-video bg-black">
+                    <video
+                      src={course.video_url}
+                      controls
+                      className="w-full h-full"
+                      controlsList="nodownload"
+                      playsInline
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                ) : (
+                  <div className="aspect-video">
+                    <iframe
+                      src={getEmbedUrl(course.video_url)}
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title={course.title}
+                    />
+                  </div>
+                )
+              ) : (
+                <div className="aspect-video bg-charcoal flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <span className="material-symbols-outlined text-6xl text-gray-600 mb-3 block">
+                      videocam
+                    </span>
+                    <p className="text-sm font-medium text-gray-400">
+                      Video content will be available here.
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Your instructor will upload the video soon.
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </section>
           )}
 
@@ -362,6 +399,28 @@ export default async function StudentCourseDetailPage({
       )}
     </div>
   );
+}
+
+function isDirectVideo(url: string): boolean {
+  return (
+    /\.(mp4|webm|mov|ogg)(\?|$)/i.test(url) ||
+    url.includes("supabase.co/storage")
+  );
+}
+
+function getEmbedUrl(url: string): string {
+  // YouTube: youtube.com/watch?v=ID or youtu.be/ID
+  const ytMatch = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/
+  );
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+
+  // Vimeo: vimeo.com/ID
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+
+  // Fallback: return URL as-is (in case it's already an embed URL)
+  return url;
 }
 
 function IncludeItem({ icon, label }: { icon: string; label: string }) {

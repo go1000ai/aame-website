@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import VideoUploader from "../VideoUploader";
 
 function formatPrice(cents: number): string {
   return "$" + (cents / 100).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -37,6 +38,7 @@ export default function NewCoursePage() {
       has_inperson: form.get("has_inperson") === "on",
       has_online: form.get("has_online") === "on",
       image_url: form.get("image_url"),
+      video_url: form.get("video_url"),
       active: true,
       sort_order: parseInt(form.get("sort_order") as string) || 0,
     };
@@ -152,6 +154,8 @@ export default function NewCoursePage() {
           <input name="image_url" type="url" placeholder="https://storage.googleapis.com/msgsndr/..." className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-primary" />
           <p className="text-xs text-gray-400 mt-1">Paste a direct link to the course image.</p>
         </div>
+
+        <VideoUploader />
 
         {/* Payment is handled automatically via Square Checkout */}
 
