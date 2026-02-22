@@ -276,6 +276,52 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Why Choose AAME */}
+        <section className="bg-white py-16 sm:py-20 border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <FadeIn>
+              <div className="text-center mb-12">
+                <h2 className="text-2xl sm:text-3xl font-[Montserrat] font-black uppercase tracking-wide">
+                  Why Choose <span className="text-primary">AAME</span>
+                </h2>
+                <div className="h-1 w-16 bg-primary mx-auto mt-4" />
+              </div>
+            </FadeIn>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                { icon: "clinical_notes", title: "15+ Years of Expertise", desc: "Led by Strani Mayorga, a Magister in Aesthetic Medicine with over 15 years of clinical experience." },
+                { icon: "science", title: "80% Hands-On Training", desc: "Practice on live models under expert supervision. Theory is only 20% — the rest is real experience." },
+                { icon: "workspace_premium", title: "Certified Upon Completion", desc: "Receive an official AAME Certificate of Completion, recognized for professional practice." },
+                { icon: "translate", title: "Bilingual: Spanish & English", desc: "All courses taught in both Spanish and English. No language barriers to your career." },
+                { icon: "payments", title: "Flexible Financing", desc: "Pay with card, Cherry 0% interest plans, or Zelle. $200 deposit locks your discounted price." },
+                { icon: "groups", title: "Small Class Sizes", desc: "Limited enrollment for personalized instruction and hands-on mentorship from Strani herself." },
+              ].map((item, i) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  whileHover={{ y: -4 }}
+                  className="bg-[#f8fafc] border border-gray-100 p-6 sm:p-8 text-center group hover:border-primary/30 transition-all"
+                >
+                  <div className="w-14 h-14 bg-charcoal mx-auto mb-4 flex items-center justify-center group-hover:bg-primary transition-colors">
+                    <span className="material-symbols-outlined text-primary text-2xl group-hover:text-charcoal transition-colors">
+                      {item.icon}
+                    </span>
+                  </div>
+                  <h3 className="font-[Montserrat] font-bold text-sm uppercase tracking-wider mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    {item.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
 
           {/* About AAME */}
@@ -535,6 +581,39 @@ export default function Home() {
             </FadeIn>
           </section>
 
+          {/* Animated Stats Counter */}
+          <section className="bg-charcoal py-14 sm:py-16 -mx-4 sm:-mx-6 px-4 sm:px-6 mb-32">
+            <div className="max-w-5xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 text-center">
+              {[
+                { end: 15, suffix: "+", label: "Years Experience" },
+                { end: 21, suffix: "+", label: "Courses Available" },
+                { end: 2500, suffix: "+", label: "Graduates Trained" },
+                { end: 98, suffix: "%", label: "Success Rate" },
+              ].map((stat, i) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.15 }}
+                >
+                  <motion.p
+                    className="text-4xl sm:text-5xl lg:text-6xl font-[Montserrat] font-black text-primary"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.15 + 0.2 }}
+                  >
+                    {stat.end.toLocaleString()}{stat.suffix}
+                  </motion.p>
+                  <p className="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-400 mt-2">
+                    {stat.label}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
           {/* Course Catalog & Pricing */}
           <section id="pricing" className="mb-32">
             <FadeIn>
@@ -668,6 +747,68 @@ export default function Home() {
             </div>
           </section>
 
+          {/* Student Testimonials */}
+          <section className="mb-32">
+            <FadeIn>
+              <div className="flex items-center gap-4 mb-12">
+                <span className="h-px flex-1 bg-charcoal opacity-20" />
+                <h2 className="text-2xl font-[Montserrat] font-black uppercase tracking-widest italic">
+                  What Our Students Say
+                </h2>
+                <span className="h-px flex-1 bg-charcoal opacity-20" />
+              </div>
+            </FadeIn>
+
+            <div className="overflow-hidden">
+              <motion.div
+                className="flex gap-6 cursor-grab active:cursor-grabbing"
+                drag="x"
+                dragConstraints={{ left: -900, right: 0 }}
+                dragElastic={0.1}
+              >
+                {[
+                  { quote: "AAME changed my career. The hands-on training gave me the confidence to start my own practice within weeks of graduating.", name: "Maria G.", role: "Licensed Esthetician", initials: "MG", color: "bg-primary" },
+                  { quote: "Strani is an incredible instructor. She makes complex injection techniques feel approachable and breaks everything down step by step.", name: "Ana R.", role: "Medical Assistant", initials: "AR", color: "bg-emerald-500" },
+                  { quote: "I took the Full Package and it was the best investment I've ever made. Now I offer 10+ services at my own clinic.", name: "Carlos M.", role: "Clinic Owner", initials: "CM", color: "bg-blue-500" },
+                  { quote: "The bilingual classes were perfect for me. I learned in Spanish and now I serve clients in both languages confidently.", name: "Lucia P.", role: "Beauty Professional", initials: "LP", color: "bg-violet-500" },
+                  { quote: "From phlebotomy to body contouring, AAME covered everything. The certification opened doors immediately after graduation.", name: "David S.", role: "Aesthetics Practitioner", initials: "DS", color: "bg-amber-500" },
+                ].map((testimonial, i) => (
+                  <motion.div
+                    key={testimonial.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="min-w-[320px] sm:min-w-[380px] bg-white border border-gray-200 p-6 sm:p-8 flex-shrink-0 shadow-clinical"
+                  >
+                    <div className="flex gap-1 mb-4">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span key={star} className="material-symbols-outlined text-amber-400 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
+                          star
+                        </span>
+                      ))}
+                    </div>
+                    <blockquote className="text-gray-600 text-sm leading-relaxed mb-6 italic">
+                      &ldquo;{testimonial.quote}&rdquo;
+                    </blockquote>
+                    <div className="flex items-center gap-3 border-t border-gray-100 pt-4">
+                      <div className={`w-10 h-10 ${testimonial.color} flex items-center justify-center text-white font-bold text-xs`}>
+                        {testimonial.initials}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">{testimonial.name}</p>
+                        <p className="text-xs text-gray-400">{testimonial.role}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+            <p className="text-center text-xs text-gray-400 mt-6">
+              Swipe to see more &rarr;
+            </p>
+          </section>
+
           {/* Professional Pathways */}
           <section id="pathways" className="grid grid-cols-12 gap-6 mb-32 relative overflow-hidden">
             <FadeIn className="col-span-12 lg:col-span-5 bg-charcoal text-white p-8 sm:p-12 geometric-block relative z-20 shadow-2xl">
@@ -723,6 +864,120 @@ export default function Home() {
               <div className="mt-4 flex gap-2">
                 <div className="h-2 w-full bg-primary" />
                 <div className="h-2 w-24 bg-charcoal" />
+              </div>
+            </FadeIn>
+          </section>
+
+          {/* The AAME Promise */}
+          <section className="mb-32 bg-primary -mx-4 sm:-mx-6 px-4 sm:px-6 py-16 sm:py-20">
+            <FadeIn>
+              <div className="text-center mb-12">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <span className="material-symbols-outlined text-charcoal text-4xl">verified_user</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-[Montserrat] font-black uppercase text-charcoal">
+                  The AAME Promise
+                </h2>
+                <div className="h-1 w-16 bg-charcoal mx-auto mt-4" />
+              </div>
+            </FadeIn>
+            <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {[
+                {
+                  icon: "workspace_premium",
+                  title: "Certified Graduate",
+                  desc: "Every student who completes their course receives an official AAME Certificate of Completion, recognized for professional practice.",
+                },
+                {
+                  icon: "science",
+                  title: "Hands-On From Day One",
+                  desc: "80% of in-person time is real practice — live models, professional equipment, and expert supervision by Strani Mayorga.",
+                },
+                {
+                  icon: "rocket_launch",
+                  title: "Career Ready",
+                  desc: "You leave with the skills, certificate, and confidence to start offering services to real clients immediately.",
+                },
+              ].map((promise, i) => (
+                <motion.div
+                  key={promise.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.15 }}
+                  className="bg-charcoal p-8 text-center"
+                >
+                  <span className="material-symbols-outlined text-primary text-4xl mb-4 block">
+                    {promise.icon}
+                  </span>
+                  <h3 className="font-[Montserrat] font-bold text-white text-sm uppercase tracking-wider mb-3">
+                    {promise.title}
+                  </h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    {promise.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
+          {/* Follow Us — Social Proof Grid */}
+          <section className="mb-32">
+            <FadeIn>
+              <div className="flex items-center gap-4 mb-12">
+                <span className="h-px flex-1 bg-charcoal opacity-20" />
+                <h2 className="text-2xl font-[Montserrat] font-black uppercase tracking-widest italic">
+                  Follow Us
+                </h2>
+                <span className="h-px flex-1 bg-charcoal opacity-20" />
+              </div>
+            </FadeIn>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+              {[
+                { src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7b9e85ccacffe1c20.jpeg", caption: "Hands-on training in our Houston clinic" },
+                { src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7b9127758b46061bc.jpeg", caption: "Founder Strani Mayorga leading a session" },
+                { src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc77fc451fc11eab846.jpeg", caption: "Advanced injection technique demonstration" },
+                { src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7b912778bf16061aa.jpeg", caption: "AAME certification ceremony" },
+                { src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc7e2d75b3832254c54.jpeg", caption: "Professional development at AAME" },
+                { src: "https://storage.googleapis.com/msgsndr/RzaSM3pnkTvspklzSgHf/media/69669dc77fc451b7a0eab847.jpeg", caption: "Our state-of-the-art training facility" },
+              ].map((post, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.08 }}
+                  className="relative aspect-square overflow-hidden group cursor-pointer"
+                >
+                  <Image
+                    alt={post.caption}
+                    src={post.src}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/70 transition-all duration-300 flex items-center justify-center">
+                    <p className="text-white text-xs sm:text-sm font-medium px-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {post.caption}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <FadeIn>
+              <div className="text-center mt-8">
+                <motion.a
+                  href="https://www.instagram.com/aameaesthetics"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-2 bg-charcoal text-white font-bold uppercase text-xs tracking-widest px-8 py-4 hover:bg-primary hover:text-charcoal transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-lg">photo_camera</span>
+                  Follow @aameaesthetics
+                </motion.a>
               </div>
             </FadeIn>
           </section>
