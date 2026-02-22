@@ -30,7 +30,7 @@ export default function StudentLoginPage() {
       return;
     }
 
-    router.push("/student/courses");
+    router.push("/student/dashboard");
   }
 
   return (
