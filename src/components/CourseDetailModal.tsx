@@ -400,18 +400,31 @@ export default function CourseDetailModal({ course, special, onClose }: Props) {
                   </button>
 
                   {/* Cherry Financing */}
-                  <a
-                    href={process.env.NEXT_PUBLIC_CHERRY_URL || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between w-full border-2 border-gray-200 text-charcoal font-bold uppercase text-xs tracking-widest px-6 py-4 hover:border-primary transition-all"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-lg">account_balance</span>
-                      Finance with Cherry
-                    </span>
-                    <span className="text-[10px] font-normal normal-case text-gray-400">0% Interest Available</span>
-                  </a>
+                  {process.env.NEXT_PUBLIC_CHERRY_URL ? (
+                    <a
+                      href={process.env.NEXT_PUBLIC_CHERRY_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between w-full border-2 border-gray-200 text-charcoal font-bold uppercase text-xs tracking-widest px-6 py-4 hover:border-primary transition-all"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-lg">account_balance</span>
+                        Finance with Cherry
+                      </span>
+                      <span className="text-[10px] font-normal normal-case text-gray-400">0% Interest Available</span>
+                    </a>
+                  ) : (
+                    <a
+                      href="tel:+17139275300"
+                      className="flex items-center justify-between w-full border-2 border-gray-200 text-charcoal font-bold uppercase text-xs tracking-widest px-6 py-4 hover:border-primary transition-all"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-lg">account_balance</span>
+                        Finance — 0% Interest
+                      </span>
+                      <span className="text-[10px] font-normal normal-case text-gray-400">Call (713) 927-5300</span>
+                    </a>
+                  )}
 
                   {/* Zelle */}
                   {!showZelleForm ? (
